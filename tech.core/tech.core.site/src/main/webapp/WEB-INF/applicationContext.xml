@@ -20,8 +20,8 @@
     <!-- aws credentials -->
     <!-- 
     <bean id="awsCredentials" class="com.amazonaws.auth.BasicAWSCredentials">
-      <constructor-arg index="0" value="AKIAI2BK4XCJ5QK2HLCQ" />
-      <constructor-arg index="1" value="4WvoZLWhFPZ5jauw2+XCU+p772S4oBN25tNPyjHR" />
+      <constructor-arg index="0" value="" />
+      <constructor-arg index="1" value="" />
     </bean>
      -->
 
