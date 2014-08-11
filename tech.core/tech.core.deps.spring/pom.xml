@@ -99,27 +99,6 @@
 		<artifactId>spring-webmvc</artifactId>
 		<version>${org.springframework.version}</version>
 	</dependency>
-	<!-- Support for testing Spring applications with tools such as JUnit and TestNG This artifact is generally always defined with 
-		a 'test' scope for the integration testing framework and unit testing stubs -->
-	<dependency>
-		<groupId>org.springframework</groupId>
-		<artifactId>spring-test</artifactId>
-		<version>${org.springframework.version}</version>
-		<scope>test</scope>
-	</dependency>
-	<!-- lib for mvc testing: https://github.com/spring-projects/spring-test-mvc -->
-	<dependency>
-		<groupId>com.jayway.jsonpath</groupId>
-		<artifactId>json-path</artifactId>
-		<version>0.9.1</version>
-		<scope>test</scope>
-	</dependency>
-	<dependency>
-		<groupId>org.hamcrest</groupId>
-		<artifactId>hamcrest-library</artifactId>
-		<version>1.3</version>
-		<scope>test</scope>
-	</dependency>
   </dependencies>
 
 </project>
