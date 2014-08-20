@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import com.appirio.tech.core.api.v2.CMCID;
 import com.appirio.tech.core.api.v2.dao.DaoBase;
-import com.appirio.tech.core.api.v2.model.AbstractIdResource;
 import com.appirio.tech.core.api.v2.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v2.request.FieldSelector;
 import com.appirio.tech.core.api.v2.request.FilterParameter;
@@ -39,7 +38,7 @@ public class UserCRUDService implements RESTPersistentService<User> {
 		return User.RESOURCE_PATH;
 	}
 
-	public AbstractIdResource handleGet(FieldSelector selector, CMCID recordId) throws Exception {
+	public User handleGet(FieldSelector selector, CMCID recordId) throws Exception {
 		for(User user : storage.getUserList()) {
 			if(user.getId().equals(recordId)) {
 				return user;
