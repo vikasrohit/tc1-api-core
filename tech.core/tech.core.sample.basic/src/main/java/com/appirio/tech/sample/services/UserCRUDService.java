@@ -52,17 +52,7 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 
 	public List<User> handleGet(HttpServletRequest request, QueryParameter query) throws Exception {
 		FilterParameter parameter = query.getFilter();
-		
-		List<User> resultList = new ArrayList<User>();
-		
-		//Filter to specified queries
-		for(User user : storage.getUserList()) {
-			if(parameter.contains("handle") && !(parameter.get("handle").equals(user.getHandle()))) continue;
-			if(parameter.contains("email") && !(parameter.get("email").equals(user.getEmail()))) continue;
-			if(parameter.contains("firstName") && !(parameter.get("firstName").equals(user.getFirstName()))) continue;
-			if(parameter.contains("lastName") && !(parameter.get("lastName").equals(user.getLastName()))) continue;
-			resultList.add(user);
-		}
+		List<User> resultList = getFilteredList(parameter);
 		
 		//order_by
 		if(query.getOrderByQuery().getOrderByField()!=null) {
@@ -112,6 +102,20 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 		return resultList;
 	}
 
+	private List<User> getFilteredList(FilterParameter parameter) {
+		List<User> resultList = new ArrayList<User>();
+		
+		//Filter to specified queries
+		for(User user : storage.getUserList()) {
+			if(parameter.contains("handle") && !(parameter.get("handle").equals(user.getHandle()))) continue;
+			if(parameter.contains("email") && !(parameter.get("email").equals(user.getEmail()))) continue;
+			if(parameter.contains("firstName") && !(parameter.get("firstName").equals(user.getFirstName()))) continue;
+			if(parameter.contains("lastName") && !(parameter.get("lastName").equals(user.getLastName()))) continue;
+			resultList.add(user);
+		}
+		return resultList;
+	}
+
 	public CMCID handlePost(HttpServletRequest request, User object) throws Exception {
 		return storage.insertUser(object).getId();
 	}
@@ -141,7 +145,7 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 	@Override
 	public Metadata getMetadata(HttpServletRequest request, QueryParameter query) throws Exception {
 		CountableMetadata metadata = new CountableMetadata();
-		metadata.setTotalCount(storage.getUserList().size());
+		metadata.setTotalCount(getFilteredList(query.getFilter()).size());
 		populateFieldInfo(metadata);
 		return metadata;
 	}
