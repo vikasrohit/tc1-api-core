@@ -14,11 +14,14 @@ import org.springframework.stereotype.Service;
 
 import com.appirio.tech.core.api.v2.CMCID;
 import com.appirio.tech.core.api.v2.dao.DaoBase;
+import com.appirio.tech.core.api.v2.metadata.CountableMetadata;
+import com.appirio.tech.core.api.v2.metadata.Metadata;
 import com.appirio.tech.core.api.v2.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v2.request.FieldSelector;
 import com.appirio.tech.core.api.v2.request.FilterParameter;
 import com.appirio.tech.core.api.v2.request.QueryParameter;
 import com.appirio.tech.core.api.v2.request.SortOrder;
+import com.appirio.tech.core.api.v2.service.AbstractMetadataService;
 import com.appirio.tech.core.api.v2.service.RESTPersistentService;
 import com.appirio.tech.sample.exception.StorageException;
 import com.appirio.tech.sample.model.User;
@@ -29,7 +32,7 @@ import com.appirio.tech.sample.storage.InMemoryStorage;
  *
  */
 @Service
-public class UserCRUDService implements RESTPersistentService<User> {
+public class UserCRUDService extends AbstractMetadataService implements RESTPersistentService<User> {
 
 	private InMemoryStorage storage = InMemoryStorage.instance();
 	
@@ -135,6 +138,14 @@ public class UserCRUDService implements RESTPersistentService<User> {
 		storage.deleteUser(id);
 	}
 
+	@Override
+	public Metadata getMetadata(HttpServletRequest request, QueryParameter query) throws Exception {
+		CountableMetadata metadata = new CountableMetadata();
+		metadata.setTotalCount(storage.getUserList().size());
+		populateFieldInfo(metadata);
+		return metadata;
+	}
+	
 	/**
 	 * We're not going to use this method.
 	 */
