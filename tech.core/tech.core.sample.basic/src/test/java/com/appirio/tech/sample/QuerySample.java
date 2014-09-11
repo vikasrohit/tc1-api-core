@@ -3,9 +3,10 @@
  */
 package com.appirio.tech.sample;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URLEncoder;
 
@@ -19,6 +20,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.appirio.tech.sample.storage.InMemoryStorage;
 
 /**
  * @author sudo
@@ -50,6 +53,15 @@ public class QuerySample {
 	public void testUserLimitQuery() throws Exception {
 		mockMvc.perform(get("/api/v2/users?fields=id,handle&limit=3&offset=2&orderBy=handle"))
 				.andExpect(status().isOk())
+				.andDo(print());
+	}
+
+	@Test
+	public void testUserMetadata() throws Exception {
+		mockMvc.perform(get("/api/v2/users?metadata=true&limit=0"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("result.metadata.fields").exists())
+				.andExpect(jsonPath("result.metadata.totalCount").value(InMemoryStorage.instance().getUserList().size()))
 				.andDo(print());
 	}
 }
