@@ -12,7 +12,7 @@
 
 	<mvc:annotation-driven>
 		<mvc:message-converters register-defaults="true">
-			<bean class="com.appirio.tech.core.api.v2.controller.ApiHttpMessageConverter"/>
+			<bean class="com.appirio.tech.core.api.v3.controller.ApiHttpMessageConverter"/>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
 

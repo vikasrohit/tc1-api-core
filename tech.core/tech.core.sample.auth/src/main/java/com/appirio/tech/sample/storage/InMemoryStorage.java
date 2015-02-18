@@ -3,7 +3,7 @@
  */
 package com.appirio.tech.sample.storage;
 
-import com.appirio.tech.core.api.v2.CMCID;
+import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.sample.exception.StorageException;
 import com.appirio.tech.sample.model.Note;
 import com.appirio.tech.sample.model.User;
@@ -71,18 +71,18 @@ public class InMemoryStorage {
 	}
 	
 	public User insertUser(User user) {
-		user.setId(new CMCID(userDual++));
+		user.setId(new TCID(userDual++));
 		userList.add(user);
 		return user;
 	}
 	
 	public Note insertNote(Note note) {
-		note.setId(new CMCID(noteDual++));
+		note.setId(new TCID(noteDual++));
 		noteList.add(note);
 		return note;
 	}
 	
-	public void deleteUser(CMCID id) {
+	public void deleteUser(TCID id) {
 		for(User user: userList) {
 			if(user.getId().equals(id)) {
 				userList.remove(user);
@@ -92,7 +92,7 @@ public class InMemoryStorage {
 		throw new StorageException("Record Not Found:" + id);
 	}
 	
-	public void deleteNote(CMCID id) {
+	public void deleteNote(TCID id) {
 		for(Note note : noteList) {
 			if(note.getId().equals(id)) {
 				noteList.remove(note);

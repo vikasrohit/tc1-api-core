@@ -1,6 +1,6 @@
 package com.appirio.tech.core.service.auth;
 
-import com.appirio.tech.core.api.v2.exception.CMCRuntimeException;
+import com.appirio.tech.core.api.v3.exception.CMCRuntimeException;
 
 @SuppressWarnings("serial")
 public class AuthenticationException extends CMCRuntimeException {

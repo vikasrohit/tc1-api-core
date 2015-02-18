@@ -1,6 +1,6 @@
 package com.appirio.tech.sample.exception;
 
-import com.appirio.tech.core.api.v2.exception.CMCRuntimeException;
+import com.appirio.tech.core.api.v3.exception.CMCRuntimeException;
 
 @SuppressWarnings("serial")
 public class StorageException extends CMCRuntimeException {

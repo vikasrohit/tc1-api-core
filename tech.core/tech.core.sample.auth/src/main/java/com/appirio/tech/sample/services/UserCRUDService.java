@@ -12,17 +12,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import com.appirio.tech.core.api.v2.CMCID;
-import com.appirio.tech.core.api.v2.dao.DaoBase;
-import com.appirio.tech.core.api.v2.metadata.CountableMetadata;
-import com.appirio.tech.core.api.v2.metadata.Metadata;
-import com.appirio.tech.core.api.v2.model.annotation.ApiMapping;
-import com.appirio.tech.core.api.v2.request.FieldSelector;
-import com.appirio.tech.core.api.v2.request.FilterParameter;
-import com.appirio.tech.core.api.v2.request.QueryParameter;
-import com.appirio.tech.core.api.v2.request.SortOrder;
-import com.appirio.tech.core.api.v2.service.AbstractMetadataService;
-import com.appirio.tech.core.api.v2.service.RESTPersistentService;
+import com.appirio.tech.core.api.v3.TCID;
+import com.appirio.tech.core.api.v3.dao.DaoBase;
+import com.appirio.tech.core.api.v3.metadata.CountableMetadata;
+import com.appirio.tech.core.api.v3.metadata.Metadata;
+import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
+import com.appirio.tech.core.api.v3.request.FieldSelector;
+import com.appirio.tech.core.api.v3.request.FilterParameter;
+import com.appirio.tech.core.api.v3.request.QueryParameter;
+import com.appirio.tech.core.api.v3.request.SortOrder;
+import com.appirio.tech.core.api.v3.service.AbstractMetadataService;
+import com.appirio.tech.core.api.v3.service.RESTPersistentService;
 import com.appirio.tech.sample.exception.StorageException;
 import com.appirio.tech.sample.model.User;
 import com.appirio.tech.sample.storage.InMemoryStorage;
@@ -41,7 +41,7 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 		return User.RESOURCE_PATH;
 	}
 
-	public User handleGet(FieldSelector selector, CMCID recordId) throws Exception {
+	public User handleGet(FieldSelector selector, TCID recordId) throws Exception {
 		for(User user : storage.getUserList()) {
 			if(user.getId().equals(recordId)) {
 				return user;
@@ -116,12 +116,12 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 		return resultList;
 	}
 
-	public CMCID handlePost(HttpServletRequest request, User object) throws Exception {
+	public TCID handlePost(HttpServletRequest request, User object) throws Exception {
 		return storage.insertUser(object).getId();
 	}
 
-	public CMCID handlePut(HttpServletRequest request, User object) throws Exception {
-		CMCID id = object.getId();
+	public TCID handlePut(HttpServletRequest request, User object) throws Exception {
+		TCID id = object.getId();
 		User orgUser = null;
 		for(User user : storage.getUserList()) {
 			if(user.getId().equals(id)) {
@@ -138,7 +138,7 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 		return id;
 	}
 
-	public void handleDelete(HttpServletRequest request, CMCID id) throws Exception {
+	public void handleDelete(HttpServletRequest request, TCID id) throws Exception {
 		storage.deleteUser(id);
 	}
 

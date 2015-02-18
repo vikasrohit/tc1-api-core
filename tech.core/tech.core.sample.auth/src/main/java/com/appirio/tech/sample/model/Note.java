@@ -5,8 +5,8 @@ package com.appirio.tech.sample.model;
 
 import java.util.List;
 
-import com.appirio.tech.core.api.v2.model.AbstractIdResource;
-import com.appirio.tech.core.api.v2.model.annotation.ApiMapping;
+import com.appirio.tech.core.api.v3.model.AbstractIdResource;
+import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
 
 /**
  * @author sudo
