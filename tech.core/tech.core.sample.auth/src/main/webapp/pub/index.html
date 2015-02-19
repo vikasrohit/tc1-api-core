@@ -13,6 +13,14 @@
         $.ajax({
             url : endpoint,
             dataType : 'json',
+            data: {fields: $("#fields").val(),
+                   filter: $("#filter").val(),
+                   limit: $("#limit").val(),
+                   offset: $("#offset").val(),
+                   offsetId: $("#offsetId").val(),
+                   orderBy: $("#orderBy").val(),
+                   include: $("#include").val(),
+                },
             success : function(data) {
                 console.log(data);
                 $("#ajaxBox").html("<pre>" + syntaxHighlight(data) + "</pre>");
@@ -31,7 +39,7 @@
             url : endpoint,
             dataType : 'json',
             success : function(data) {
-                var popup = window.open("", "", "location=no, menubar=no, toolbar=no");
+                var popup = window.open("", "", "location=yes, menubar=yes, toolbar=no");
                 popup.document.write('<html><body>Decoded: <span id="status"></span></body></html>');
                 popup.document.getElementById('status').innerHTML = '<pre>' + JSON.stringify(data, undefined, 2) + '</pre>';
 
@@ -145,7 +153,7 @@ pre {
   </div>
   <h3>API endpoint</h3>
     <dl>
-      <dt>host:</dt><dd><input type=text id="host" value="http://api-test.elasticbeanstalk.com" size=70/></dd>
+      <dt>host:</dt><dd><input type=text id="host" value="http://localhost:8080/tech.core.sample.auth" size=70/></dd>
       <dt>endpoint:</dt><dd><input type=text id="endpoint" value="/api/v3/" disabled="disabled"/></dd>
       <dt>resource:</dt><dd><input type=text id="resource" value="users"/></dd>
       <dt>filter:</dt><dd><input type=text id="filter" size=70/></dd>
