@@ -15,10 +15,22 @@ import com.appirio.tech.core.api.v2.controller.ApiBeanSerializeFilter;
 import com.appirio.tech.core.api.v2.exception.CMCParseException;
 import com.appirio.tech.core.api.v2.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v2.request.FieldSelector;
+import org.springframework.util.ClassUtils;
 
 /**
- * @author sudo
+ * The helper utility for resource related tasks.
  *
+ * @author sudo, TCSASSEMBLER
+ *
+ * <p>
+ * Version 1.1 (POC Assembly - Direct API Create direct project)
+ * <ul>
+ *     <li>Fixed {@link #getDefaultFields(Class)} to get methods via reflection from actual resource class,
+ *     not the spring proxied class.</li>
+ * </ul>
+ * </p>
+ *
+ * @version 1.1 (POC Assembly - Direct API Create direct project)
  */
 public class ResourceHelper {
 
@@ -63,13 +75,12 @@ public class ResourceHelper {
 	
 	public static Set<String> getDefaultFields(Class<? extends AbstractResource> clazz) {
 		Set<String> ret = new HashSet<String>();
-		
-		Method[] methods = clazz.getMethods();
-		for(Method method : methods) {
+        Method[] methods = ClassUtils.getUserClass(clazz).getMethods();
+        for(Method method : methods) {
 			String methodName = method.getName();
 			if(methodName.startsWith("get") && method.getParameterTypes().length==0) {
 				ApiMapping api = method.getAnnotation(ApiMapping.class);
-				if(api==null || (api.visible() && api.queryDefault())) {
+                if(api==null || (api.visible() && api.queryDefault())) {
 					ret.add(getApiFieldName(method.getName()));
 					if(api!=null && api.alias()!=null) {
 						for(String alias : api.alias()) {
