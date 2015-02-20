@@ -44,21 +44,21 @@ public class QuerySample {
 	
 	@Test
 	public void testUserQuery() throws Exception {
-		mockMvc.perform(get("/api/v2/users?fields=id,handle&filter=" + URLEncoder.encode("handle=sudo0124", "UTF-8")))
+		mockMvc.perform(get("/api/v3/users?fields=id,handle&filter=" + URLEncoder.encode("handle=sudo0124", "UTF-8")))
 				.andExpect(status().isOk())
 				.andDo(print());
 	}
 
 	@Test
 	public void testUserLimitQuery() throws Exception {
-		mockMvc.perform(get("/api/v2/users?fields=id,handle&limit=3&offset=2&orderBy=handle"))
+		mockMvc.perform(get("/api/v3/users?fields=id,handle&limit=3&offset=2&orderBy=handle"))
 				.andExpect(status().isOk())
 				.andDo(print());
 	}
 
 	@Test
 	public void testUserMetadata() throws Exception {
-		mockMvc.perform(get("/api/v2/users?metadata=true&limit=0"))
+		mockMvc.perform(get("/api/v3/users?include=metadata&limit=0"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("result.metadata.fields").exists())
 				.andExpect(jsonPath("result.metadata.totalCount").value(InMemoryStorage.instance().getUserList().size()))

@@ -42,13 +42,13 @@ public class AuthenticationEndpointTest {
 
 	@Test
 	public void callWithoutTokenResponds403() throws Exception {
-		mockMvc.perform(get("/api/v2/"))
+		mockMvc.perform(get("/api/v3/"))
 				.andExpect(status().isForbidden());
 	}
 	
 	@Test
 	public void callWithInValidTokenResponds403() throws Exception {
-		mockMvc.perform(get("/api/v2/").header("Authentication", "Bearer invalid_token"))
+		mockMvc.perform(get("/api/v3/").header("Authentication", "Bearer invalid_token"))
 				.andExpect(status().isForbidden());
 	}
 }
