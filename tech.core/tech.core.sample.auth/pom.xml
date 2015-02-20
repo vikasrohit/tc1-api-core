@@ -1,15 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.appirio.tech.core.sample</groupId>
-  <artifactId>tech.core.sample.auth</artifactId>
+  <groupId>com.appirio.tech.core.service</groupId>
+  <artifactId>tech.core.service.identity</artifactId>
   <packaging>war</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>tech.core.sample.auth Maven Webapp</name>
+  <name>tech.core.service.identity Maven Webapp</name>
   <url>http://maven.apache.org</url>
 
   <build>
-    <finalName>tech.core.sample.auth</finalName>
+    <finalName>tech.core.service.identity</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
