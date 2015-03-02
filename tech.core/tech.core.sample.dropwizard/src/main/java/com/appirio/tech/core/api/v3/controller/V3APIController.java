@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -34,24 +34,28 @@ import com.appirio.tech.core.sample.services.UserCRUDService;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 
-@Path("/v3/users")
+/**
+ * An Entrypoint Controller class for all api /v3/* endpoints
+ * 
+ * For request/response protocol, see doc in CMC folder.
+ * @see <a href="https://docs.google.com/a/appirio.com/presentation/d/1BLt2Mq_iEu6Az5CAX-cF-Ebg0xlj6rde--1tp0r2iaQ/edit">API Specification</a>
+ *
+ * @author sudo
+ * @param <T>
+ *
+ */
+@Path("/v3")
 @Produces(MediaType.APPLICATION_JSON)
-public class V3APIResource {
-	private final AtomicLong counter;
+public class V3APIController {
 
-	public V3APIResource() {
-		this.counter = new AtomicLong();
-	}
-
-	public ApiResponse getObjects(@QueryParam("name") Optional<String> name) {
-		ApiResponse response = new ApiResponse();
-		response.setId(String.valueOf(counter.incrementAndGet()));
-		return response;
+	public V3APIController() {
 	}
 
 	@GET
+	@Path("/{resource}")
 	@Timed
 	public ApiResponse getObjects(
+			@PathParam("resource") String resource,
 			@QueryParam(value="fields") Optional<String> fieldsIn,
 			@QueryParam(value="filter") Optional<String> filterIn,
 			@QueryParam(value="limit") Optional<String> limitIn,

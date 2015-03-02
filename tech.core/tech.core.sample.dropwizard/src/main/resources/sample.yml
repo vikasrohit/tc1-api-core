@@ -1,54 +1,34 @@
-# Database settings.
-database:
-
-  # the name of your JDBC driver
-  driverClass: org.h2.Driver
-
-  # the username
-  user: sa
-
-  # the password
-  password: sa
-
-  # the JDBC URL
-  url: jdbc:h2:./target/example
-
-# use the simple server factory if you only want to run on a single port
-#server:
-#  type: simple
-#  connector:
-#    type: http
-#    port: 8080
+# Register model/service/exception
+# There are 2 ways to bind your resources.
+#   1. Run from APIApplication.main() -- Register using following attributes will load appropriate
+#      model/service/exception classes on boot time, and enables to speak V3 API.
+#         For (1) to work;
+#           a) model needs extend AbstractResource
+#           b) service implements interfaces defined under com.appirio.tech.core.api.v3.service package
+#           c)exception extends CMCRuntimeException.
+#   2. Run from custom main() -- Alternatively, you can create you own custom Application and Configuration
+#      classes of DropWizard, and implement V3 API by yourself.
+# TODO: map multiple classes
+v3models: com.appirio.tech.core.sample.model.User
+v3services: com.appirio.tech.core.sample.services.UserCRUDService
+v3exceptions: com.appirio.tech.core.sample.exception.StorageException
+# End registration of V3 API framework
 
 server:
-#  softNofileLimit: 1000
-#  hardNofileLimit: 1000
   applicationConnectors:
     - type: http
       port: 8080
-# this requires the alpn-boot library on the JVM's boot classpath
-#    - type: spdy3
-#      port: 8445
-#      keyStorePath: example.keystore
-#      keyStorePassword: example
-#      validateCerts: false
   adminConnectors:
     - type: http
       port: 8081
 
 # Logging settings.
 logging:
-
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
-
   # Logger-specific levels.
   loggers:
-
-    # Sets the level for 'com.example.app' to DEBUG.
-    com.example.app: DEBUG
-
-    org.hibernate.SQL: ALL
-
+    # Sets the level for 'com.appirio.tech' to DEBUG.
+    com.appirio.tech: DEBUG
   appenders:
     - type: console
