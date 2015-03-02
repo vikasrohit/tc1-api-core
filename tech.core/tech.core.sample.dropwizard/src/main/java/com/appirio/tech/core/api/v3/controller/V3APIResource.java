@@ -29,8 +29,8 @@ import com.appirio.tech.core.api.v3.response.ApiFieldSelectorResponse;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.appirio.tech.core.api.v3.service.RESTMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTQueryService;
-import com.appirio.tech.service.sample.model.User;
-import com.appirio.tech.service.sample.services.UserCRUDService;
+import com.appirio.tech.core.sample.model.User;
+import com.appirio.tech.core.sample.services.UserCRUDService;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 

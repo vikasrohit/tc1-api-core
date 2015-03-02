@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.appirio.tech.service.sample.services;
+package com.appirio.tech.core.sample.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,9 +21,9 @@ import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.api.v3.request.SortOrder;
 import com.appirio.tech.core.api.v3.service.AbstractMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTPersistentService;
-import com.appirio.tech.service.sample.exception.StorageException;
-import com.appirio.tech.service.sample.model.User;
-import com.appirio.tech.service.sample.storage.InMemoryUserStorage;
+import com.appirio.tech.core.sample.exception.StorageException;
+import com.appirio.tech.core.sample.model.User;
+import com.appirio.tech.core.sample.storage.InMemoryUserStorage;
 
 /**
  * @author sudo

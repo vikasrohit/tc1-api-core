@@ -10,8 +10,8 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import com.appirio.tech.service.sample.IdentitySampleApplication;
-import com.appirio.tech.service.sample.IdentitySampleConfiguration;
+import com.appirio.tech.core.api.v3.dropwizard.APIApplication;
+import com.appirio.tech.core.api.v3.dropwizard.APIBaseConfiguration;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 
@@ -22,11 +22,11 @@ import com.sun.jersey.api.client.ClientResponse;
  * @author sudo
  * 
  */
-public class V3EndpointTest {
+public class EndpointTest {
 	
 	@ClassRule
-	public static final DropwizardAppRule<IdentitySampleConfiguration> RULE = new DropwizardAppRule<IdentitySampleConfiguration>(
-			IdentitySampleApplication.class, "src/main/resources/sample.yml");
+	public static final DropwizardAppRule<APIBaseConfiguration> RULE = new DropwizardAppRule<APIBaseConfiguration>(
+			APIApplication.class, "src/main/resources/sample.yml");
 
 	@Test
 	public void testRoot() throws Exception {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.appirio.tech.service.sample;
+package com.appirio.tech.core.api.v3.dropwizard;
 
 import io.dropwizard.Configuration;
 
@@ -11,7 +11,7 @@ import io.dropwizard.Configuration;
  * @author sudo
  * 
  */
-public class IdentitySampleConfiguration extends Configuration {
+public class APIBaseConfiguration extends Configuration {
 	/*
 	 * Empty configuration for now
 	 */

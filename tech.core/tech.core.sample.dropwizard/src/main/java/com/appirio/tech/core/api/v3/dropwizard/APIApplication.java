@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.appirio.tech.service.sample;
+package com.appirio.tech.core.api.v3.dropwizard;
 
 import com.appirio.tech.core.api.v3.controller.V3APIResource;
 
@@ -13,7 +13,7 @@ import io.dropwizard.setup.Environment;
  * @author sudo
  * 
  */
-public class IdentitySampleApplication extends Application<IdentitySampleConfiguration> {
+public class APIApplication extends Application<APIBaseConfiguration> {
 
 	@Override
 	public String getName() {
@@ -21,17 +21,17 @@ public class IdentitySampleApplication extends Application<IdentitySampleConfigu
 	}
 
 	@Override
-	public void initialize(Bootstrap<IdentitySampleConfiguration> bootstrap) {
+	public void initialize(Bootstrap<APIBaseConfiguration> bootstrap) {
 		// Not used for now
 	}
 
 	@Override
-	public void run(IdentitySampleConfiguration configuration, Environment environment) throws Exception {
+	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
 		final V3APIResource resource = new V3APIResource();
 		environment.jersey().register(resource);
 	}
 
 	public static void main(String[] args) throws Exception {
-		new IdentitySampleApplication().run(args);
+		new APIApplication().run(args);
 	}
 }

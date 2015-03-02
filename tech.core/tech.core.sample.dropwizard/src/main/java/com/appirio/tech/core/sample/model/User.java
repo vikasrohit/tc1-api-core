@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.appirio.tech.service.sample.model;
+package com.appirio.tech.core.sample.model;
 
 import com.appirio.tech.core.api.v3.model.AbstractIdResource;
 import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;

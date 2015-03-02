@@ -1,14 +1,14 @@
 /**
  * 
  */
-package com.appirio.tech.service.sample.storage;
+package com.appirio.tech.core.sample.storage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.appirio.tech.core.api.v3.TCID;
-import com.appirio.tech.service.sample.exception.StorageException;
-import com.appirio.tech.service.sample.model.User;
+import com.appirio.tech.core.sample.exception.StorageException;
+import com.appirio.tech.core.sample.model.User;
 
 
 /**
