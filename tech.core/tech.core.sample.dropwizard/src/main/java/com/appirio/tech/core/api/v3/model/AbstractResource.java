@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
  * @author sudo
  *
  */
-@JsonFilter("ApiResponseFilter")
+//@JsonFilter("ApiResponseFilter")
 public abstract class AbstractResource implements RESTService {
 	
 	private TCID accountId;
