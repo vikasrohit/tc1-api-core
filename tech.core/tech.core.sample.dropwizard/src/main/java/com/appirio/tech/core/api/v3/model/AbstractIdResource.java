@@ -7,8 +7,8 @@ import com.appirio.tech.core.api.v3.TCID;
 
 
 /**
- * Base class for CMC domain object that has ID, which means that the object is
- * stored as a record in CMC storage.
+ * Base class for domain object that has ID, which means that the object is
+ * stored as a record in persistent storage.
  * 
  * @author sudo
  *
@@ -23,4 +23,5 @@ public abstract class AbstractIdResource extends AbstractResource {
 	public TCID getId() {
 		return id;
 	}
+	
 }

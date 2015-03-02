@@ -1,7 +1,7 @@
 package com.appirio.tech.core.api.v3.exception;
 
 @SuppressWarnings("serial")
-public class ResourceInitializationException extends CMCRuntimeException {
+public class ResourceInitializationException extends APIRuntimeException {
 
 	public ResourceInitializationException() {
 	}

@@ -3,7 +3,7 @@
  */
 package com.appirio.tech.core.api.v3.request;
 
-import com.appirio.tech.core.api.v3.exception.CMCParseException;
+import com.appirio.tech.core.api.v3.exception.APIParseException;
 
 /**
  * Request query order by definition for /api/va1 endpoints
@@ -29,7 +29,7 @@ public class RequestOrderBy {
 		this.rawString = orderByValue;
 		String[] orderBy = orderByValue.split(" ");
 		if(orderBy.length > 3) {
-			throw new CMCParseException("Unable to parse order_by parameter:" + orderByValue);
+			throw new APIParseException("Unable to parse order_by parameter:" + orderByValue);
 		}
 		
 		field = orderBy[0];

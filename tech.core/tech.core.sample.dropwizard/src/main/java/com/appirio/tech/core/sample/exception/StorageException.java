@@ -1,9 +1,9 @@
 package com.appirio.tech.core.sample.exception;
 
-import com.appirio.tech.core.api.v3.exception.CMCRuntimeException;
+import com.appirio.tech.core.api.v3.exception.APIRuntimeException;
 
 @SuppressWarnings("serial")
-public class StorageException extends CMCRuntimeException {
+public class StorageException extends APIRuntimeException {
 
 	public StorageException() {
 	}

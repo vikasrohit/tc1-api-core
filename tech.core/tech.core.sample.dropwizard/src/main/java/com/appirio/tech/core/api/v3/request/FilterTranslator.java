@@ -3,7 +3,7 @@
  */
 package com.appirio.tech.core.api.v3.request;
 
-import com.appirio.tech.core.api.v3.exception.CMCParseException;
+import com.appirio.tech.core.api.v3.exception.APIParseException;
 import com.appirio.tech.core.api.v3.util.ApiUtil;
 
 /**
@@ -58,6 +58,6 @@ public class FilterTranslator {
 				return sfFieldName + " Like '%" + ApiUtil.escapeSoqlForLike((String)filter.get(fieldName)) + "%'";
 			}
 		}
-		throw new CMCParseException("Unable to parse field for filter:" + fieldName);
+		throw new APIParseException("Unable to parse field for filter:" + fieldName);
 	}
 }

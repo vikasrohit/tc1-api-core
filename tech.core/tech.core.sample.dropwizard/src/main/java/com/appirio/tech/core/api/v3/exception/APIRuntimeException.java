@@ -8,25 +8,25 @@ package com.appirio.tech.core.api.v3.exception;
  *
  */
 @SuppressWarnings("serial")
-public class CMCRuntimeException extends RuntimeException {
+public class APIRuntimeException extends RuntimeException {
 
 	/**
 	 * 
 	 */
-	public CMCRuntimeException() {
+	public APIRuntimeException() {
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public CMCRuntimeException(String arg0) {
+	public APIRuntimeException(String arg0) {
 		super(arg0);
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public CMCRuntimeException(Throwable arg0) {
+	public APIRuntimeException(Throwable arg0) {
 		super(arg0);
 	}
 
@@ -34,7 +34,7 @@ public class CMCRuntimeException extends RuntimeException {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public CMCRuntimeException(String arg0, Throwable arg1) {
+	public APIRuntimeException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 

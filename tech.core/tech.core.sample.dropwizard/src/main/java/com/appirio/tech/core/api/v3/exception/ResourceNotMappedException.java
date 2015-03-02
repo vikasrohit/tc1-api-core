@@ -10,7 +10,7 @@ package com.appirio.tech.core.api.v3.exception;
  *
  */
 @SuppressWarnings("serial")
-public class ResourceNotMappedException extends CMCRuntimeException {
+public class ResourceNotMappedException extends APIRuntimeException {
 
 	public ResourceNotMappedException() {
 	}

@@ -5,7 +5,6 @@ package com.appirio.tech.core.api.v3.model;
 
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.api.v3.service.RESTService;
-import com.fasterxml.jackson.annotation.JsonFilter;
 
 /**
  * Base class to represent TC Domain object.

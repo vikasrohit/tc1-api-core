@@ -9,19 +9,19 @@ package com.appirio.tech.core.api.v3.exception;
  *
  */
 @SuppressWarnings("serial")
-public class CMCParseException extends CMCRuntimeException {
+public class APIParseException extends APIRuntimeException {
 
 	/**
 	 * 
 	 */
-	public CMCParseException() {
+	public APIParseException() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param arg0
 	 */
-	public CMCParseException(String arg0) {
+	public APIParseException(String arg0) {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 	}
@@ -29,7 +29,7 @@ public class CMCParseException extends CMCRuntimeException {
 	/**
 	 * @param arg0
 	 */
-	public CMCParseException(Throwable arg0) {
+	public APIParseException(Throwable arg0) {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 	}
@@ -38,7 +38,7 @@ public class CMCParseException extends CMCRuntimeException {
 	 * @param arg0
 	 * @param arg1
 	 */
-	public CMCParseException(String arg0, Throwable arg1) {
+	public APIParseException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 		// TODO Auto-generated constructor stub
 	}

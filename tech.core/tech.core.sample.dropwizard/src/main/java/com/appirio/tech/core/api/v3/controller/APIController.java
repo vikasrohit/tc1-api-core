@@ -46,9 +46,9 @@ import com.google.common.base.Optional;
  */
 @Path("/v3")
 @Produces(MediaType.APPLICATION_JSON)
-public class V3APIController {
+public class APIController {
 
-	public V3APIController() {
+	public APIController() {
 	}
 
 	@GET

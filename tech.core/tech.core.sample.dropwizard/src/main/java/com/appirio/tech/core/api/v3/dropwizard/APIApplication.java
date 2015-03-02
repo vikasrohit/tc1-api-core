@@ -3,7 +3,7 @@
  */
 package com.appirio.tech.core.api.v3.dropwizard;
 
-import com.appirio.tech.core.api.v3.controller.V3APIController;
+import com.appirio.tech.core.api.v3.controller.APIController;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -14,7 +14,7 @@ import io.dropwizard.setup.Environment;
  * This class is the standard class to run API V3 based RESTful apps. When running app from this class,
  * API V3 library will load model/service/exception that has extended/inherited defined classes/interfaces
  * and will communicate via V3 protocol automatically.
- * In case, all request will go through {@link V3APIController}
+ * In case, all request will go through {@link APIController}
  * 
  * Application has freedom to create their own main() to run DropWizard apps, in which case, individual app
  * need to implement V3 protocol.
@@ -36,7 +36,7 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 
 	@Override
 	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
-		final V3APIController resource = new V3APIController();
+		final APIController resource = new APIController();
 		environment.jersey().register(resource);
 	}
 

@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.appirio.tech.core.api.v3.exception.CMCParseException;
+import com.appirio.tech.core.api.v3.exception.APIParseException;
 import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
 
@@ -27,7 +27,7 @@ public class ResourceHelper {
 	 * 
 	 * @param methodName
 	 * @return
-	 * @throws CMCParseException when the specified method is not getter/setter/is-getter
+	 * @throws APIParseException when the specified method is not getter/setter/is-getter
 	 * @since va1
 	 */
 	public static String getApiFieldName(String methodName) {
@@ -37,7 +37,7 @@ public class ResourceHelper {
 		} else if (methodName.startsWith("is")) {
 			return Introspector.decapitalize(methodName.substring(2));
 		} else {
-			throw new CMCParseException("Unable to transform method to underscore field name");
+			throw new APIParseException("Unable to transform method to underscore field name");
 		}
 	}
 
@@ -138,7 +138,7 @@ public class ResourceHelper {
 					}
 				}
 			} catch (Exception e) {
-				throw new CMCParseException("Was unable to locate getter method for the field:" + fieldName, e);
+				throw new APIParseException("Was unable to locate getter method for the field:" + fieldName, e);
 			}
 		}
 		

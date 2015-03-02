@@ -8,7 +8,7 @@ import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.appirio.tech.core.api.v3.exception.CMCParseException;
+import com.appirio.tech.core.api.v3.exception.APIParseException;
 
 /**
  * Represents a query parameter specified in our API.
@@ -34,7 +34,7 @@ public class SearchParameter {
         for(String param : params) {
             String[] data = param.split("=");
             if(data.length != 2) {
-                throw new CMCParseException("Unable to parse filter parameter:" + param);
+                throw new APIParseException("Unable to parse filter parameter:" + param);
             }
             // support multibyte character.
             try {
