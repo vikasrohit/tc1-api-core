@@ -1,13 +1,13 @@
 /**
  * 
  */
-package com.appirio.tech.sample.storage;
+package com.appirio.tech.service.sample.storage;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.appirio.tech.core.api.v3.TCID;
-import com.appirio.tech.sample.exception.StorageException;
+import com.appirio.tech.service.sample.exception.StorageException;
 import com.appirio.tech.service.sample.model.User;
 
 
@@ -15,9 +15,9 @@ import com.appirio.tech.service.sample.model.User;
  * @author sudo
  *
  */
-public class InMemoryStorage {
+public class InMemoryUserStorage {
 	
-	private static InMemoryStorage instance = new InMemoryStorage();
+	private static InMemoryUserStorage instance = new InMemoryUserStorage();
 	
 	private int userDual = 10000;
 	
@@ -27,7 +27,7 @@ public class InMemoryStorage {
 	 * Singleton In-memory Storage.
 	 * Use {@link #instance()} to obtain the instance.
 	 */
-	private InMemoryStorage() {	
+	private InMemoryUserStorage() {	
 		createSample();
 	}
 	
@@ -63,7 +63,7 @@ public class InMemoryStorage {
 		return insertUser(user);
 	}
 
-	public static InMemoryStorage instance() {
+	public static InMemoryUserStorage instance() {
 		return instance;
 	}
 	

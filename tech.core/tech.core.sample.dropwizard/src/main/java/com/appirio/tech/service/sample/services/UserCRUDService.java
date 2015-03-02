@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.appirio.tech.sample.services;
+package com.appirio.tech.service.sample.services;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,9 +21,9 @@ import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.api.v3.request.SortOrder;
 import com.appirio.tech.core.api.v3.service.AbstractMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTPersistentService;
-import com.appirio.tech.sample.exception.StorageException;
-import com.appirio.tech.sample.storage.InMemoryStorage;
+import com.appirio.tech.service.sample.exception.StorageException;
 import com.appirio.tech.service.sample.model.User;
+import com.appirio.tech.service.sample.storage.InMemoryUserStorage;
 
 /**
  * @author sudo
@@ -31,7 +31,7 @@ import com.appirio.tech.service.sample.model.User;
  */
 public class UserCRUDService extends AbstractMetadataService implements RESTPersistentService<User> {
 
-	private InMemoryStorage storage = InMemoryStorage.instance();
+	private InMemoryUserStorage storage = InMemoryUserStorage.instance();
 	
 	@ApiMapping(visible = false)
 	public String getResourcePath() {

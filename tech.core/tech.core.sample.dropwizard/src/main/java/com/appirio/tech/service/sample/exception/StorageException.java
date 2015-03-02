@@ -1,4 +1,4 @@
-package com.appirio.tech.sample.exception;
+package com.appirio.tech.service.sample.exception;
 
 import com.appirio.tech.core.api.v3.exception.CMCRuntimeException;
 

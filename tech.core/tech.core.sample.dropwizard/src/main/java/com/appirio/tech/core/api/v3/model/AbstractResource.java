@@ -8,12 +8,12 @@ import com.appirio.tech.core.api.v3.service.RESTService;
 import com.fasterxml.jackson.annotation.JsonFilter;
 
 /**
- * Base class to represent CMC Domain object.
+ * Base class to represent TC Domain object.
  * 
  * The class is annotated with ApiResonseFilter which will be used to create Response for
  * api using {@link ApiBeanSerializeFilter} inside {@link ApiHttpMessageConverter}
  * 
- * CMCResource class was introduced to handle "virtual" models that do not have id (== persistent storage)
+ * AbstractResource class was introduced to handle "virtual" models that do not have id (== persistent storage)
  * 
  * @author sudo
  *
