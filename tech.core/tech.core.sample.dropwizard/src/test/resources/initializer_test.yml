@@ -1,16 +1,19 @@
 # Register model/service/exception
 # There are 2 ways to bind your resources.
 #   1. Run from APIApplication.main() -- Register using following attributes will load appropriate
-#      model/service classes on boot time, and enables to speak V3 API.
+#      model/service/exception classes on boot time, and enables to speak V3 API.
 #         For (1) to work;
 #           a) model needs extend AbstractResource
 #           b) service implements interfaces defined under com.appirio.tech.core.api.v3.service package
 #   2. Run from custom main() -- Alternatively, you can create you own custom Application and Configuration
 #      classes of DropWizard, and implement V3 API by yourself.
 v3models: 
-  - com.appirio.tech.core.sample.model.User
+  - com.appirio.tech.core.api.v3.mock.a.MockModelA
+  - com.appirio.tech.core.api.v3.mock.b.MockModelB
 v3services: 
-  - com.appirio.tech.core.sample.services.UserCRUDService
+  - com.appirio.tech.core.api.v3.mock.a.MockActionService
+  - com.appirio.tech.core.api.v3.mock.a.MockQueryService
+  - com.appirio.tech.core.api.v3.mock.b.MockPersistentService
 # End registration of V3 API framework
 
 server:

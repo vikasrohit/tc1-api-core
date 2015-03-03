@@ -29,12 +29,6 @@ public class EndpointTest {
 			APIApplication.class, "src/main/resources/sample.yml");
 
 	@Test
-	public void testConfiguration() throws Exception {
-		APIBaseConfiguration config = RULE.getConfiguration();
-		Assert.assertNotNull(config.getV3models());
-	}
-	
-	@Test
 	public void testRoot() throws Exception {
 		
 		Client client = new Client();
