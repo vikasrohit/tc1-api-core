@@ -41,6 +41,6 @@ public class EndpointTest {
 		ClientResponse response = client.resource(String.format("http://localhost:%d/v3/users", RULE.getLocalPort()))
 									.get(ClientResponse.class);
 		
-		Assert.assertEquals(response.getStatus(), HttpStatus.OK_200);
+		Assert.assertEquals(HttpStatus.OK_200, response.getStatus());
 	}
 }

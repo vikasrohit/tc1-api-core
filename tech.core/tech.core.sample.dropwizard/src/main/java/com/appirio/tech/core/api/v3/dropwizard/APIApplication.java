@@ -4,6 +4,7 @@
 package com.appirio.tech.core.api.v3.dropwizard;
 
 import com.appirio.tech.core.api.v3.controller.APIController;
+import com.appirio.tech.core.api.v3.controller.ResourceFactory;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -36,7 +37,7 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 
 	@Override
 	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
-		final APIController resource = new APIController();
+		final APIController resource = new APIController(ResourceFactory.build(configuration));
 		environment.jersey().register(resource);
 	}
 

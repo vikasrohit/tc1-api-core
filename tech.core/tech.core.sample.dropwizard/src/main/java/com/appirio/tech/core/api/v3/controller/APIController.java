@@ -29,26 +29,34 @@ import com.appirio.tech.core.api.v3.response.ApiFieldSelectorResponse;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.appirio.tech.core.api.v3.service.RESTMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTQueryService;
-import com.appirio.tech.core.sample.model.User;
-import com.appirio.tech.core.sample.services.UserCRUDService;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 
 /**
- * An Entrypoint Controller class for all api /v3/* endpoints
+ * An Entrypoint Controller class for all api /v3/* endpoints, that serves as Facade for all incoming requests.
  * 
- * For request/response protocol, see doc in CMC folder.
+ * For request/response protocol;
  * @see <a href="https://docs.google.com/a/appirio.com/presentation/d/1BLt2Mq_iEu6Az5CAX-cF-Ebg0xlj6rde--1tp0r2iaQ/edit">API Specification</a>
  *
  * @author sudo
- * @param <T>
- *
  */
 @Path("/v3")
 @Produces(MediaType.APPLICATION_JSON)
 public class APIController {
+	
+	private ResourceFactory resourceFactory;
 
-	public APIController() {
+	public APIController(ResourceFactory resourceFactory) {
+		this.resourceFactory = resourceFactory;
+	}
+
+	/**
+	 * Get current {@link ResourceFactory} that is registered within this Controller
+	 * 
+	 * @return
+	 */
+	public ResourceFactory getResourceFactory() {
+		return resourceFactory;
 	}
 
 	@GET
@@ -77,7 +85,7 @@ public class APIController {
 		if(fields != null) {
 			selector = FieldSelector.instanceFromV2String(fields);
 		} else {
-			selector = ResourceHelper.getDefaultFieldSelector(User.class);
+			selector = ResourceHelper.getDefaultFieldSelector(resourceFactory.getResourceModel(resource));
 		}
 
 		QueryParameter query = new QueryParameter(selector,
@@ -85,14 +93,14 @@ public class APIController {
 				LimitQuery.instanceFromRaw(limit, offset, offsetId),
 				OrderByQuery.instanceFromRaw(orderBy));
 		
-		RESTQueryService<?> service = new UserCRUDService();
+		RESTQueryService<?> service = resourceFactory.getQueryService(resource);
 		List<? extends AbstractResource> models = service.handleGet(request, query);
 
 		//attach metadata if requested and MetadataService exists for this resource
 		Object metadataObject = null;
 		if(include!=null && include.startsWith("metadata")) {
 			try {
-				RESTMetadataService metaService = new UserCRUDService();
+				RESTMetadataService metaService = resourceFactory.getMetadataService(resource);
 				metadataObject = metaService.getMetadata(request, query);
 			} catch (ResourceNotMappedException e) {
 				metadataObject = "metadata not supported";

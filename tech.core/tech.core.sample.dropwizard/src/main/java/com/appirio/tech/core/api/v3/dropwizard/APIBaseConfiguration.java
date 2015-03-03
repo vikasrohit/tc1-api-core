@@ -3,6 +3,8 @@
  */
 package com.appirio.tech.core.api.v3.dropwizard;
 
+import java.util.List;
+
 import io.dropwizard.Configuration;
 
 /**
@@ -14,31 +16,31 @@ import io.dropwizard.Configuration;
  */
 public class APIBaseConfiguration extends Configuration {
 	
-	String v3models;
-	String v3services;
-	String v3exceptions;
+	List<String> v3models;
+	List<String> v3services;
+	List<String> v3exceptions;
 	
-	public void setV3models(String v3models) {
+	public void setV3models(List<String> v3models) {
 		this.v3models = v3models;
 	}
 	
-	public String getV3models() {
+	public List<String> getV3models() {
 		return v3models;
 	}
 
-	public String getV3services() {
+	public List<String> getV3services() {
 		return v3services;
 	}
 
-	public void setV3services(String v3services) {
+	public void setV3services(List<String> v3services) {
 		this.v3services = v3services;
 	}
 
-	public String getV3exceptions() {
+	public List<String> getV3exceptions() {
 		return v3exceptions;
 	}
 
-	public void setV3exceptions(String v3exceptions) {
+	public void setV3exceptions(List<String> v3exceptions) {
 		this.v3exceptions = v3exceptions;
 	}
 }

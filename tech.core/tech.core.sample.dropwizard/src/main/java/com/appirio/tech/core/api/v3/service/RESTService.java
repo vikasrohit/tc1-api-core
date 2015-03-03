@@ -19,5 +19,5 @@ public interface RESTService {
 	 * @return
 	 */
 	@ApiMapping(visible=false)
-	public String getResourcePath();
+	public String getRootResource();
 }

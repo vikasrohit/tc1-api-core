@@ -21,7 +21,7 @@ public class User extends AbstractIdResource {
 	
 	@Override
 	@ApiMapping(visible = false)
-	public String getResourcePath() {
+	public String getRootResource() {
 		return RESOURCE_PATH;
 	}
 	public String getHandle() {

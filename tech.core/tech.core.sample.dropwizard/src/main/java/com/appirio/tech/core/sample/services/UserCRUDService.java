@@ -34,7 +34,7 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 	private InMemoryUserStorage storage = InMemoryUserStorage.instance();
 	
 	@ApiMapping(visible = false)
-	public String getResourcePath() {
+	public String getRootResource() {
 		return User.RESOURCE_PATH;
 	}
 
