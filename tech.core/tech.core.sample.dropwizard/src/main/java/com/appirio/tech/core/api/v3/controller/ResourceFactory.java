@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.appirio.tech.core.api.v3.dropwizard.APIBaseConfiguration;
 import com.appirio.tech.core.api.v3.exception.AppInitializationException;
 import com.appirio.tech.core.api.v3.exception.ResourceNotMappedException;
+import com.appirio.tech.core.api.v3.model.AbstractIdResource;
 import com.appirio.tech.core.api.v3.model.AbstractResource;
 import com.appirio.tech.core.api.v3.service.RESTActionService;
 import com.appirio.tech.core.api.v3.service.RESTMetadataService;
@@ -51,7 +52,7 @@ public class ResourceFactory {
 		}
 	}
 	
-	public RESTPersistentService<? extends AbstractResource> getPersistentService(String resource) throws ResourceNotMappedException {
+	public RESTPersistentService<? extends AbstractIdResource> getPersistentService(String resource) throws ResourceNotMappedException {
 		if(persistentServiceMap.containsKey(resource)) {
 			return persistentServiceMap.get(resource);
 		} else {

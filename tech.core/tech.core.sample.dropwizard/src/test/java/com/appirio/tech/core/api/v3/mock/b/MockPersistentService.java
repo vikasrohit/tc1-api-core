@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,6 +30,7 @@ import com.appirio.tech.core.api.v3.service.RESTPersistentService;
  */
 public class MockPersistentService extends AbstractMetadataService implements RESTActionService, RESTPersistentService<MockModelB> {
 
+	private AtomicInteger integer = new AtomicInteger();
 	private Map<TCID, MockModelB> mockStorage = new HashMap<TCID, MockModelB>();
 
 	public String getRootResource() {
@@ -45,8 +47,11 @@ public class MockPersistentService extends AbstractMetadataService implements RE
 	}
 
 	public TCID handlePost(HttpServletRequest request, MockModelB object) throws Exception {
-		/* Not Implemented for mock yet */
-		return null;
+		MockModelB modelB = new MockModelB();
+		TCID id = new TCID(integer.getAndIncrement());
+		modelB.setId(id);
+		mockStorage.put(id, modelB);
+		return modelB.getId();
 	}
 
 	public TCID handlePut(HttpServletRequest request, MockModelB object) throws Exception {

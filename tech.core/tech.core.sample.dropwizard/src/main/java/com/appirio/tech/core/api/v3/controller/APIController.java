@@ -17,7 +17,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.jetty.http.HttpStatus;
-import org.hibernate.cfg.ExtendsQueueEntry;
 
 import com.appirio.tech.core.api.v3.ApiVersion;
 import com.appirio.tech.core.api.v3.TCID;
@@ -163,12 +162,14 @@ public class APIController {
 	@POST
 	@Path("/{resource}")
 	@Timed
-	public <T extends AbstractIdResource> ApiResponse createObject(@PathParam("resource") String resource,
+	public ApiResponse createObject(@PathParam("resource") String resource,
 									@Valid PostPutRequest postRequest,
 									@Context HttpServletRequest request) throws Exception {
 
+		//PostPutRequest postRequest = new PostPutRequest();
 		// get the RESTPersistentService according to the resource name
-		RESTPersistentService<?> resourceService = resourceFactory.getPersistentService(resource);
+		@SuppressWarnings("rawtypes")
+		RESTPersistentService resourceService = resourceFactory.getPersistentService(resource);
 
 		@SuppressWarnings("unchecked")
 		Class<? extends AbstractIdResource> resourceModel = (Class<? extends AbstractIdResource>) resourceFactory
@@ -184,8 +185,10 @@ public class APIController {
 		} else {
 			try {
 				// deserialize param data in post request (json data) to the
-				// resource object
-//				resourceData = JACKSON_OBJECT_MAPPER.readValue(postRequest.getParam(), resourceModel);
+				// resource object.
+				// Note: current version of ObjectMapper doesn't directly support #readValue(JsonNode, object) so putting into String
+				resourceData = JACKSON_OBJECT_MAPPER.readValue(
+						JACKSON_OBJECT_MAPPER.writeValueAsString(postRequest.getParam()), resourceModel);
 			} catch (Exception ex) {
 				// error when deserialize from json data
 				throw new ResourceInitializationException(String.format(
@@ -194,6 +197,7 @@ public class APIController {
 		}
 
 		// call the RESTPersistentService.handlePost
+		@SuppressWarnings("unchecked")
 		TCID newID = resourceService.handlePost(request, resourceData);
 
 		resourceData.setId(newID);

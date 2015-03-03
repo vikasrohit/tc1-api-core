@@ -4,6 +4,7 @@
 package com.appirio.tech.core.api.v3.service;
 
 import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 /**
@@ -19,5 +20,6 @@ public interface RESTService {
 	 * @return
 	 */
 	@ApiMapping(visible=false)
+	@JsonIgnore
 	public String getRootResource();
 }
