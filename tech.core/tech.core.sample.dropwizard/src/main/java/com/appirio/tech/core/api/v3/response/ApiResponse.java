@@ -22,6 +22,7 @@ public class ApiResponse {
 		private Integer status;
 		private Object metadata;
 		private Object content;
+		public Result() {}
 		public Result(Boolean success, Integer status, Object metadata, Object content) {
 			this.success = success;
 			this.status = status;
