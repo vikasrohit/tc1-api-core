@@ -5,6 +5,8 @@ package com.appirio.tech.core.api.v3.dropwizard;
 
 import com.appirio.tech.core.api.v3.controller.APIController;
 import com.appirio.tech.core.api.v3.controller.ResourceFactory;
+import com.appirio.tech.core.api.v3.response.ApiResponse;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -37,6 +39,8 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 
 	@Override
 	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
+		environment.getObjectMapper().setDateFormat(ISO8601DateFormat.getInstance());
+		ApiResponse.JACKSON_OBJECT_MAPPER = environment.getObjectMapper();
 		final APIController resource = new APIController(ResourceFactory.build(configuration));
 		environment.jersey().register(resource);
 	}

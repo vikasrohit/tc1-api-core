@@ -11,6 +11,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 
+import org.joda.time.DateTime;
+
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.api.v3.dao.DaoBase;
 import com.appirio.tech.core.api.v3.metadata.CountableMetadata;
@@ -138,6 +140,7 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 		orgUser.setEmail(object.getEmail());
 		orgUser.setFirstName(object.getFirstName());
 		orgUser.setLastName(object.getLastName());
+		orgUser.setModifiedAt(new DateTime());
 		return id;
 	}
 

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class ApiResponse {
-	private static final ObjectMapper JACKSON_OBJECT_MAPPER = new ObjectMapper();
+	public static ObjectMapper JACKSON_OBJECT_MAPPER; //Injected during DW application boot
 	private String id;
 	private Result result;
 	private ApiVersion version;

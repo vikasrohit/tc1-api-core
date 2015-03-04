@@ -12,6 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
 
+import org.joda.time.DateTime;
+
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.api.v3.dao.DaoBase;
 import com.appirio.tech.core.api.v3.metadata.CountableMetadata;
@@ -57,6 +59,8 @@ public class MockPersistentService extends AbstractMetadataService implements RE
 	public TCID handlePost(HttpServletRequest request, MockModelB object) throws Exception {
 		TCID id = new TCID(integer.getAndIncrement());
 		object.setId(id);
+		object.setModifiedAt(new DateTime());
+		object.setCreatedAt(new DateTime());
 		mockStorage.put(id, object);
 		return object.getId();
 	}
@@ -65,6 +69,7 @@ public class MockPersistentService extends AbstractMetadataService implements RE
 		MockModelB modelB = mockStorage.get(object.getId());
 		modelB.setIntTest(object.getIntTest());
 		modelB.setStrTest(object.getStrTest());
+		object.setModifiedAt(new DateTime());
 		return object.getId();
 	}
 

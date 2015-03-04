@@ -5,6 +5,9 @@ package com.appirio.tech.core.sample.storage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.joda.time.DateTime;
 
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.sample.exception.StorageException;
@@ -19,7 +22,7 @@ public class InMemoryUserStorage {
 	
 	private static InMemoryUserStorage instance = new InMemoryUserStorage();
 	
-	private int userDual = 10000;
+	private AtomicInteger userDual = new AtomicInteger(1000);
 	
 	private List<User> userList = new ArrayList<User>();
 	
@@ -68,7 +71,9 @@ public class InMemoryUserStorage {
 	}
 	
 	public User insertUser(User user) {
-		user.setId(new TCID(userDual++));
+		user.setId(new TCID(userDual.getAndIncrement()));
+		user.setCreatedAt(new DateTime());
+		user.setModifiedAt(new DateTime());
 		userList.add(user);
 		return user;
 	}

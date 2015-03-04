@@ -110,7 +110,9 @@ public class EndpointTest {
 				String.format("http://localhost:%d/v3/mock_b_models", RULE.getLocalPort())).get(ClientResponse.class);
 
 		ApiResponse getResponse = response.getEntity(ApiResponse.class);
+		System.out.println("Result is" + getResponse.getResult());
 		MockModelA[] content = getResponse.getContentResource(MockModelA[].class);
+		System.out.println(getResponse.getResult());
 		Assert.assertEquals(2, content.length);
 	}
 
