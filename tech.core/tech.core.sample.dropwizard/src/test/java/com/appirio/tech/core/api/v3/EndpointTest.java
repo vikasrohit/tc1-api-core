@@ -14,10 +14,12 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import com.appirio.tech.core.api.v3.controller.ResourceFactory;
 import com.appirio.tech.core.api.v3.dropwizard.APIApplication;
 import com.appirio.tech.core.api.v3.dropwizard.APIBaseConfiguration;
 import com.appirio.tech.core.api.v3.mock.a.MockModelA;
 import com.appirio.tech.core.api.v3.mock.b.MockModelB;
+import com.appirio.tech.core.api.v3.mock.b.MockPersistentService;
 import com.appirio.tech.core.api.v3.request.PostPutRequest;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -70,6 +72,8 @@ public class EndpointTest {
 
 	@Test
 	public void testPost() throws Exception {
+		((MockPersistentService)ResourceFactory.instance().getPersistentService("mock_b_models")).clearData();
+		
 		//Prepare 2 objects
 		MockModelB modelA = new MockModelB();
 		modelA.setIntTest(100);
@@ -107,11 +111,70 @@ public class EndpointTest {
 				String.format("http://localhost:%d/v3/mock_b_models", RULE.getLocalPort())).get(ClientResponse.class);
 
 		ApiResponse getResponse = response.getEntity(ApiResponse.class);
-		Assert.assertEquals(ApiVersion.v3, getResponse.getVersion());
-		Assert.assertNotNull(getResponse.getId());
-		Assert.assertEquals(HttpStatus.OK_200, (int) getResponse.getResult().getStatus());
-		@SuppressWarnings("unchecked")
-		List<MockModelA> content = (List<MockModelA>) getResponse.getResult().getContent();
-		Assert.assertEquals(2, content.size());
+		MockModelA[] content = getResponse.getContentResource(MockModelA[].class);
+		Assert.assertEquals(2, content.length);
+	}
+
+	@Test
+	public void testPut() throws Exception {
+		((MockPersistentService)ResourceFactory.instance().getPersistentService("mock_b_models")).clearData();
+
+		//Insert new object
+		MockModelB modelB = new MockModelB();
+		modelB.setIntTest(200);
+		modelB.setStrTest("Test String B");
+		
+		PostPutRequest request = new PostPutRequest();
+		request.setParam(JACKSON_OBJECT_MAPPER.valueToTree(modelB));
+		Client client = new Client();
+		ClientResponse response = client.resource(String.format("http://localhost:%d/v3/mock_b_models", RULE.getLocalPort()))
+				.accept("application/json").type("application/json").post(ClientResponse.class, request);
+		
+		//Do update to the resource
+		ApiResponse apiResponse = response.getEntity(ApiResponse.class);
+		TCID id = apiResponse.getContentResource(MockModelB.class).getId();
+		modelB.setId(id);
+		modelB.setIntTest(500); //New value that should get updated
+		modelB.setStrTest("Test String Updated"); //New value that should get updated
+		request.setParam(JACKSON_OBJECT_MAPPER.valueToTree(modelB));
+		client.resource(String.format("http://localhost:%d/v3/mock_b_models/%s", RULE.getLocalPort(), id))
+				.accept("application/json").type("application/json").put(ClientResponse.class, request);
+		
+		//Get the resource again, and see that it has been updated correctly
+		response = client.resource(
+				String.format("http://localhost:%d/v3/mock_b_models/%s", RULE.getLocalPort(), id)).get(ClientResponse.class);
+		
+		ApiResponse getResponse = response.getEntity(ApiResponse.class);
+		MockModelB content = getResponse.getContentResource(MockModelB.class);
+		Assert.assertEquals(500, (int)content.getIntTest());
+		Assert.assertEquals("Test String Updated", content.getStrTest());
+	}
+
+	@Test
+	public void testDelete() throws Exception {
+		((MockPersistentService)ResourceFactory.instance().getPersistentService("mock_b_models")).clearData();
+		
+		//Insert 1 object
+		MockModelB modelA = new MockModelB();
+		modelA.setIntTest(100);
+		modelA.setStrTest("Test String A");
+		
+		PostPutRequest requestA = new PostPutRequest();
+		requestA.setParam(JACKSON_OBJECT_MAPPER.valueToTree(modelA));
+		Client client = new Client();
+		ClientResponse response = client.resource(String.format("http://localhost:%d/v3/mock_b_models", RULE.getLocalPort()))
+				.accept("application/json").type("application/json").post(ClientResponse.class, requestA);
+
+		response = client.resource(
+				String.format("http://localhost:%d/v3/mock_b_models/%s", RULE.getLocalPort(), 
+						response.getEntity(ApiResponse.class).getContentResource(MockModelB.class).getId())).delete(ClientResponse.class);
+		
+		//Assert by getting everything
+		response = client.resource(
+				String.format("http://localhost:%d/v3/mock_b_models", RULE.getLocalPort())).get(ClientResponse.class);
+
+		ApiResponse getResponse = response.getEntity(ApiResponse.class);
+		MockModelA[] content = getResponse.getContentResource(MockModelA[].class);
+		Assert.assertEquals(0, content.length);
 	}
 }

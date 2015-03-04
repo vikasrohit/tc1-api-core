@@ -182,4 +182,8 @@ public class ResourceFactory {
 		instance.initialize(configuration);
 		return instance;
 	}
+	
+	public static ResourceFactory instance() {
+		return instance;
+	}
 }

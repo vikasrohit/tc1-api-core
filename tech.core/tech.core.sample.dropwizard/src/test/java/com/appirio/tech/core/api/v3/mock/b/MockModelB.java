@@ -54,6 +54,7 @@ public class MockModelB extends AbstractIdResource {
 		this.dummyField = dummyField;
 	}
 
+	@JsonIgnore
 	@ApiMapping(visible=false)
 	public String getApiHidden() {
 		return apiHidden;
@@ -63,6 +64,7 @@ public class MockModelB extends AbstractIdResource {
 		this.apiHidden = apiHidden;
 	}
 
+	@JsonIgnore
 	@ApiMapping(queryDefault=false)
 	public String getApiDefaultHidden() {
 		return apiDefaultHidden;

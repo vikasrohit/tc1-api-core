@@ -30,7 +30,7 @@ import com.appirio.tech.core.api.v3.service.RESTPersistentService;
  */
 public class MockPersistentService extends AbstractMetadataService implements RESTActionService, RESTPersistentService<MockModelB> {
 
-	private AtomicInteger integer = new AtomicInteger();
+	private AtomicInteger integer = new AtomicInteger(100);
 	private Map<TCID, MockModelB> mockStorage = new HashMap<TCID, MockModelB>();
 
 	public String getRootResource() {
@@ -47,20 +47,21 @@ public class MockPersistentService extends AbstractMetadataService implements RE
 	}
 
 	public TCID handlePost(HttpServletRequest request, MockModelB object) throws Exception {
-		MockModelB modelB = new MockModelB();
 		TCID id = new TCID(integer.getAndIncrement());
-		modelB.setId(id);
-		mockStorage.put(id, modelB);
-		return modelB.getId();
+		object.setId(id);
+		mockStorage.put(id, object);
+		return object.getId();
 	}
 
 	public TCID handlePut(HttpServletRequest request, MockModelB object) throws Exception {
-		/* Not Implemented for mock yet */
-		return null;
+		MockModelB modelB = mockStorage.get(object.getId());
+		modelB.setIntTest(object.getIntTest());
+		modelB.setStrTest(object.getStrTest());
+		return object.getId();
 	}
 
 	public void handleDelete(HttpServletRequest request, TCID id) throws Exception {
-		/* Not Implemented for mock yet */
+		mockStorage.remove(id);
 	}
 
 	public DaoBase<MockModelB> getResourceDao() {
@@ -92,5 +93,9 @@ public class MockPersistentService extends AbstractMetadataService implements RE
 
 	public Map<TCID, MockModelB> getStorage() {
 		return mockStorage;
+	}
+
+	public void clearData() {
+		mockStorage = new HashMap<TCID, MockModelB>();
 	}
 }

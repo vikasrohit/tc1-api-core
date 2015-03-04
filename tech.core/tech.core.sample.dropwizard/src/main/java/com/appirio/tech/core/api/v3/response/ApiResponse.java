@@ -3,9 +3,15 @@
  */
 package com.appirio.tech.core.api.v3.response;
 
+import java.io.IOException;
 import java.rmi.server.UID;
 
 import com.appirio.tech.core.api.v3.ApiVersion;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 /**
@@ -17,36 +23,7 @@ import com.appirio.tech.core.api.v3.ApiVersion;
  *
  */
 public class ApiResponse {
-	public class Result {
-		private Boolean success;
-		private Integer status;
-		private Object metadata;
-		private Object content;
-		public Result() {}
-		public Result(Boolean success, Integer status, Object metadata, Object content) {
-			this.success = success;
-			this.status = status;
-			this.metadata = metadata;
-			this.content = content;
-		}
-		public Boolean getSuccess() {
-			return success;
-		}
-		public Integer getStatus() {
-			return status;
-		}
-		public Object getMetadata() {
-			return metadata;
-		}
-		public Object getContent() {
-			return content;
-		}
-		@Override
-		public String toString() {
-			return "{success:" + success + "},{status:" + status + "},{metadata:" + metadata + "},{content:" + content + "}";
-		}
-	}
-
+	private static final ObjectMapper JACKSON_OBJECT_MAPPER = new ObjectMapper();
 	private String id;
 	private Result result;
 	private ApiVersion version;
@@ -79,6 +56,18 @@ public class ApiResponse {
 	}
 	public void setVersion(ApiVersion version) {
 		this.version = version;
+	}
+	
+	/**
+	 * Utility method to return Resource content.
+	 * 
+	 * @param typeParameterClass
+	 * 		POJO class or its array that this ApiResponse should be holding.
+	 */
+	@JsonIgnore
+	public <T> T getContentResource(Class<T> typeParameterClass) throws JsonParseException, JsonMappingException, JsonProcessingException, IOException {
+		return JACKSON_OBJECT_MAPPER.readValue(
+				JACKSON_OBJECT_MAPPER.writeValueAsString(getResult().getContent()), typeParameterClass);
 	}
 	@Override
 	public String toString() {
