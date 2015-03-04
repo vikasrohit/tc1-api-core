@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.joda.time.DateTime;
 
 import com.appirio.tech.core.api.v3.TCID;
+import com.appirio.tech.core.api.v3.request.FilterParameter;
 import com.appirio.tech.core.sample.exception.StorageException;
 import com.appirio.tech.core.sample.model.User;
 
@@ -90,6 +91,41 @@ public class InMemoryUserStorage {
 	
 	public List<User> getUserList() {
 		return userList;
+	}
+
+	public List<User> getFilteredUserList(FilterParameter parameter) {
+		List<User> resultList = new ArrayList<User>();
+		
+		//Filter to specified queries
+		for(User user : getUserList()) {
+			if(parameter.contains("handle") && !(parameter.get("handle").equals(user.getHandle()))) continue;
+			if(parameter.contains("email") && !(parameter.get("email").equals(user.getEmail()))) continue;
+			if(parameter.contains("firstName") && !(parameter.get("firstName").equals(user.getFirstName()))) continue;
+			if(parameter.contains("lastName") && !(parameter.get("lastName").equals(user.getLastName()))) continue;
+			resultList.add(user);
+		}
+		return resultList;
+	}
+
+	/**
+	 * @param object
+	 */
+	public void updateUser(User object) {
+		TCID id = object.getId();
+		User orgUser = null;
+		for(User user : getUserList()) {
+			if(user.getId().equals(id)) {
+				orgUser = user; break;
+			}
+		}
+		if(orgUser==null) {
+			throw new StorageException("Id of the User not found:" + id);
+		}
+		orgUser.setHandle(object.getHandle());
+		orgUser.setEmail(object.getEmail());
+		orgUser.setFirstName(object.getFirstName());
+		orgUser.setLastName(object.getLastName());
+		orgUser.setModifiedAt(object.getModifiedAt());
 	}
 	
 }

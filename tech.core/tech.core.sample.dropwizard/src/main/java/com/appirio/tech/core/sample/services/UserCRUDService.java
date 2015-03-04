@@ -3,7 +3,6 @@
  */
 package com.appirio.tech.core.sample.services;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -57,7 +56,7 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 
 	public List<User> handleGet(HttpServletRequest request, QueryParameter query) throws Exception {
 		FilterParameter parameter = query.getFilter();
-		List<User> resultList = getFilteredList(parameter);
+		List<User> resultList = storage.getFilteredUserList(parameter);
 		
 		//order_by
 		if(query.getOrderByQuery().getOrderByField()!=null) {
@@ -107,41 +106,16 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 		return resultList;
 	}
 
-	private List<User> getFilteredList(FilterParameter parameter) {
-		List<User> resultList = new ArrayList<User>();
-		
-		//Filter to specified queries
-		for(User user : storage.getUserList()) {
-			if(parameter.contains("handle") && !(parameter.get("handle").equals(user.getHandle()))) continue;
-			if(parameter.contains("email") && !(parameter.get("email").equals(user.getEmail()))) continue;
-			if(parameter.contains("firstName") && !(parameter.get("firstName").equals(user.getFirstName()))) continue;
-			if(parameter.contains("lastName") && !(parameter.get("lastName").equals(user.getLastName()))) continue;
-			resultList.add(user);
-		}
-		return resultList;
-	}
-
 	public TCID handlePost(HttpServletRequest request, User object) throws Exception {
+		object.setCreatedAt(new DateTime());
+		object.setModifiedAt(new DateTime());
 		return storage.insertUser(object).getId();
 	}
 
 	public TCID handlePut(HttpServletRequest request, User object) throws Exception {
-		TCID id = object.getId();
-		User orgUser = null;
-		for(User user : storage.getUserList()) {
-			if(user.getId().equals(id)) {
-				orgUser = user; break;
-			}
-		}
-		if(orgUser==null) {
-			throw new StorageException("Id of the User not found:" + id);
-		}
-		orgUser.setHandle(object.getHandle());
-		orgUser.setEmail(object.getEmail());
-		orgUser.setFirstName(object.getFirstName());
-		orgUser.setLastName(object.getLastName());
-		orgUser.setModifiedAt(new DateTime());
-		return id;
+		object.setModifiedAt(new DateTime());
+		storage.updateUser(object);
+		return object.getId();
 	}
 
 	public void handleDelete(HttpServletRequest request, TCID id) throws Exception {
@@ -151,7 +125,7 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 	@Override
 	public Metadata getMetadata(HttpServletRequest request, QueryParameter query) throws Exception {
 		CountableMetadata metadata = new CountableMetadata();
-		metadata.setTotalCount(getFilteredList(query.getFilter()).size());
+		metadata.setTotalCount(storage.getFilteredUserList(query.getFilter()).size());
 		populateFieldInfo(metadata);
 		return metadata;
 	}

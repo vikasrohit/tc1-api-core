@@ -35,11 +35,4 @@ public interface DaoBase <T extends AbstractIdResource> {
 
 	void delete(TCID id) throws Exception;
 
-	/**
-	 * Returns handling model class of this dao.
-	 * The method is necessary since <T> is erased and can only be determined on runtime ("generics type erasure" issue)
-	 * 
-	 * @return
-	 */
-	public Class<T> getHandlingClass();
 }

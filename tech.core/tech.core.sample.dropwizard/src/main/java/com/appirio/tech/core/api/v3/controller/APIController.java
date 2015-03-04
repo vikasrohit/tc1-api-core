@@ -50,7 +50,7 @@ import com.google.common.base.Optional;
  *
  * @author sudo
  */
-@Path("/v3")
+@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class APIController {
 	

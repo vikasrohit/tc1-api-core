@@ -3,14 +3,14 @@
  */
 package com.appirio.tech.core.api.v3.dropwizard;
 
+import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+
 import com.appirio.tech.core.api.v3.controller.APIController;
 import com.appirio.tech.core.api.v3.controller.ResourceFactory;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
-
-import io.dropwizard.Application;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
 
 /**
  * Application entry point for DropWizard framework.
@@ -34,12 +34,14 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 
 	@Override
 	public void initialize(Bootstrap<APIBaseConfiguration> bootstrap) {
+		//V3 API communicates in ISO8601 format for DateTime
 		bootstrap.getObjectMapper().setDateFormat(ISO8601DateFormat.getInstance());
 		ApiResponse.JACKSON_OBJECT_MAPPER = bootstrap.getObjectMapper();
 	}
 
 	@Override
 	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
+		environment.jersey().setUrlPattern("/v3/*");
 		final APIController resource = new APIController(ResourceFactory.build(configuration));
 		environment.jersey().register(resource);
 	}
