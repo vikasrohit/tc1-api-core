@@ -34,13 +34,12 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 
 	@Override
 	public void initialize(Bootstrap<APIBaseConfiguration> bootstrap) {
-		// Not used for now
+		bootstrap.getObjectMapper().setDateFormat(ISO8601DateFormat.getInstance());
+		ApiResponse.JACKSON_OBJECT_MAPPER = bootstrap.getObjectMapper();
 	}
 
 	@Override
 	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
-		environment.getObjectMapper().setDateFormat(ISO8601DateFormat.getInstance());
-		ApiResponse.JACKSON_OBJECT_MAPPER = environment.getObjectMapper();
 		final APIController resource = new APIController(ResourceFactory.build(configuration));
 		environment.jersey().register(resource);
 	}
