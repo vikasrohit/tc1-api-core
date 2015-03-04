@@ -21,7 +21,7 @@ import com.appirio.tech.core.service.identity.view.LoginView;
  * @author sudo
  *
  */
-@Path("login")
+@Path("/login")
 @Produces(MediaType.TEXT_HTML)
 public class LoginWebflowCtrl {
 

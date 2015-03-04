@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author sudo
  *
  */
-@Path("callback")
+@Path("/callback")
 @Produces(MediaType.TEXT_HTML)
 public class CallbackWebflowCtrl {
 
