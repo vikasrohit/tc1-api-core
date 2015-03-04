@@ -14,6 +14,7 @@ import java.util.Set;
 import com.appirio.tech.core.api.v3.exception.APIParseException;
 import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
+import com.appirio.tech.core.api.v3.service.RESTResource;
 
 /**
  * @author sudo
@@ -47,7 +48,7 @@ public class ResourceHelper {
 	 * @param clazz
 	 * @since v2
 	 */
-	public static FieldSelector getDefaultFieldSelector(Class<? extends AbstractResource> clazz) {
+	public static FieldSelector getDefaultFieldSelector(Class<? extends RESTResource> clazz) {
 		FieldSelector selector = new FieldSelector();
 		try {
 			Set<String> fields = ResourceHelper.getDefaultFields(clazz);
@@ -60,7 +61,7 @@ public class ResourceHelper {
 		return selector;
 	}
 	
-	public static Set<String> getDefaultFields(Class<? extends AbstractResource> clazz) {
+	public static Set<String> getDefaultFields(Class<? extends RESTResource> clazz) {
 		Set<String> ret = new HashSet<String>();
 		
 		Method[] methods = clazz.getMethods();
@@ -93,7 +94,7 @@ public class ResourceHelper {
 	 * @param selector
 	 * @since va1
 	 */
-	public static void setSerializeFields(AbstractResource cobj, FieldSelector selector, Map<Integer, Set<String>> objectFieldMap) {
+	public static void setSerializeFields(RESTResource cobj, FieldSelector selector, Map<Integer, Set<String>> objectFieldMap) {
 		if(selector==null) return;
 		Set<String> serializeFields = new HashSet<String>();
 		serializeFields = selector.getSelectedFields();
@@ -107,7 +108,7 @@ public class ResourceHelper {
 		for(Method method : methods) {
 			String methodName = method.getName();
 			if(methodName.startsWith("get") && method.getParameterTypes().length==0) {
-				if(AbstractResource.class.isAssignableFrom(method.getReturnType()) ||
+				if(RESTResource.class.isAssignableFrom(method.getReturnType()) ||
 						isReturnNotNullOrTypeCollectionOfCMCResource(cobj, method)) {
 					
 					String underscoreLabel = getApiFieldName(methodName);
@@ -124,14 +125,14 @@ public class ResourceHelper {
 				Method method = methodMap.get(fieldName);
 				if(method!=null) {
 					Class<?> returnType = method.getReturnType();
-					if(AbstractResource.class.isAssignableFrom(returnType)) {
-						AbstractResource co = (AbstractResource)method.invoke(cobj);
+					if(RESTResource.class.isAssignableFrom(returnType)) {
+						RESTResource co = (RESTResource)method.invoke(cobj);
 						if(co!=null) setSerializeFields(co, selector.getField(fieldName), objectFieldMap);
 					} else if (Collection.class.isAssignableFrom(returnType)) {
 						Collection<?> collection = (Collection<?>)method.invoke(cobj);
 						for(Object item : collection) {
-							if(item instanceof AbstractResource) {
-								AbstractResource co = (AbstractResource)item;
+							if(item instanceof RESTResource) {
+								RESTResource co = (RESTResource)item;
 								setSerializeFields(co, selector.getField(fieldName), objectFieldMap);
 							}
 						}
@@ -151,7 +152,7 @@ public class ResourceHelper {
 	 * @param method
 	 * @return
 	 */
-	private static boolean isReturnNotNullOrTypeCollectionOfCMCResource(AbstractResource co, Method method) {
+	private static boolean isReturnNotNullOrTypeCollectionOfCMCResource(RESTResource co, Method method) {
 		if (Collection.class.isAssignableFrom(method.getReturnType())) {
 			Object obj;
 			try {
@@ -161,7 +162,7 @@ public class ResourceHelper {
 			}
 			if (obj != null) {
 				Collection<?> col = (Collection<?>) obj;
-				if (col.size() > 0 && col.iterator().next() instanceof AbstractResource) {
+				if (col.size() > 0 && col.iterator().next() instanceof RESTResource) {
 					return true;
 				}
 			}

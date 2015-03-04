@@ -29,7 +29,6 @@ import com.sun.jersey.api.client.ClientResponse;
 /**
  * V3 API test point.
  * 
- * 
  * @author sudo
  * 
  */

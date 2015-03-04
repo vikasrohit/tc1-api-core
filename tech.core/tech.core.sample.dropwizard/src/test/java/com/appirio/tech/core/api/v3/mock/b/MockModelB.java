@@ -14,8 +14,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class MockModelB extends AbstractIdResource {
 
-	public static final String RESOURCE_PATH = "mock_b_models";
-
 	private String strTest;
 	private Integer intTest;
 	private String dummyField = "dummy";
@@ -72,9 +70,5 @@ public class MockModelB extends AbstractIdResource {
 
 	public void setApiDefaultHidden(String apiDefaultHidden) {
 		this.apiDefaultHidden = apiDefaultHidden;
-	}
-
-	public String getRootResource() {
-		return RESOURCE_PATH;
 	}
 }

@@ -10,17 +10,21 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Path;
 
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.api.v3.dao.DaoBase;
 import com.appirio.tech.core.api.v3.metadata.CountableMetadata;
 import com.appirio.tech.core.api.v3.metadata.Metadata;
+import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.appirio.tech.core.api.v3.service.AbstractMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTActionService;
 import com.appirio.tech.core.api.v3.service.RESTPersistentService;
+import com.appirio.tech.core.api.v3.service.RESTResource;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Mock Service class that handles all the REST calls.
@@ -28,15 +32,19 @@ import com.appirio.tech.core.api.v3.service.RESTPersistentService;
  * @author sudo
  *
  */
+@Path("mock_b_models")
 public class MockPersistentService extends AbstractMetadataService implements RESTActionService, RESTPersistentService<MockModelB> {
 
 	private AtomicInteger integer = new AtomicInteger(100);
 	private Map<TCID, MockModelB> mockStorage = new HashMap<TCID, MockModelB>();
 
-	public String getRootResource() {
-		return MockModelB.RESOURCE_PATH;
+	@Override
+	@ApiMapping(visible = false)
+	@JsonIgnore
+	public Class<? extends RESTResource> getResourceClass() {
+		return MockModelB.class;
 	}
-
+	
 	public MockModelB handleGet(FieldSelector selector, TCID recordId) throws Exception {
 		return mockStorage.get(recordId);
 	}

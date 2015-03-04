@@ -8,7 +8,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.appirio.tech.core.api.v3.TCID;
-import com.appirio.tech.core.api.v3.model.AbstractResource;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
 
@@ -18,7 +17,7 @@ import com.appirio.tech.core.api.v3.request.QueryParameter;
  * @author sudo
  *
  */
-public interface RESTQueryService<T extends AbstractResource> extends RESTService {
+public interface RESTQueryService<T extends RESTResource> extends RESTService {
 
 	/**
 	 * returns CMCObject of defined TCID.
@@ -31,5 +30,4 @@ public interface RESTQueryService<T extends AbstractResource> extends RESTServic
 	T handleGet(FieldSelector selector, TCID recordId) throws Exception;
 
 	List<T> handleGet(HttpServletRequest request, QueryParameter query) throws Exception;
-	
 }

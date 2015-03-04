@@ -4,6 +4,7 @@
 package com.appirio.tech.core.api.v3.model;
 
 import com.appirio.tech.core.api.v3.TCID;
+import com.appirio.tech.core.api.v3.service.RESTResource;
 
 
 /**
@@ -13,7 +14,7 @@ import com.appirio.tech.core.api.v3.TCID;
  * @author sudo
  *
  */
-public abstract class AbstractIdResource extends AbstractResource {
+public abstract class AbstractIdResource implements RESTResource {
 	private TCID id;
 	
 	public void setId(TCID id) {
@@ -23,5 +24,4 @@ public abstract class AbstractIdResource extends AbstractResource {
 	public TCID getId() {
 		return id;
 	}
-	
 }

@@ -25,7 +25,6 @@ import com.appirio.tech.core.api.v3.ApiVersion;
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.api.v3.exception.ResourceNotMappedException;
 import com.appirio.tech.core.api.v3.model.AbstractIdResource;
-import com.appirio.tech.core.api.v3.model.AbstractResource;
 import com.appirio.tech.core.api.v3.model.ResourceHelper;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
 import com.appirio.tech.core.api.v3.request.FilterParameter;
@@ -38,6 +37,7 @@ import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.appirio.tech.core.api.v3.service.RESTMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTPersistentService;
 import com.appirio.tech.core.api.v3.service.RESTQueryService;
+import com.appirio.tech.core.api.v3.service.RESTResource;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
@@ -118,7 +118,7 @@ public class APIController {
 		QueryParameter query = new QueryParameter(FieldSelector.instanceFromV2String(fields));
 		RESTQueryService<?> service = resourceFactory.getQueryService(resource);
 
-		AbstractResource model = service.handleGet(query.getSelector(), recordId);
+		RESTResource model = service.handleGet(query.getSelector(), recordId);
 		return createFieldSelectorResponse(model, query.getSelector());
 	}
 
@@ -176,7 +176,7 @@ public class APIController {
 				OrderByQuery.instanceFromRaw(orderBy));
 		
 		RESTQueryService<?> service = resourceFactory.getQueryService(resource);
-		List<? extends AbstractResource> models = service.handleGet(request, query);
+		List<? extends RESTResource> models = service.handleGet(request, query);
 
 		//attach metadata if requested and MetadataService exists for this resource
 		Object metadataObject = null;
@@ -349,10 +349,10 @@ public class APIController {
 		return response;
 	}
 
-	private ApiFieldSelectorResponse createFieldSelectorResponse(List<? extends AbstractResource> object, Object metadata, FieldSelector selector) {
+	private ApiFieldSelectorResponse createFieldSelectorResponse(List<? extends RESTResource> object, Object metadata, FieldSelector selector) {
 		ApiFieldSelectorResponse response = new ApiFieldSelectorResponse();
 		Map<Integer, Set<String>> fieldSelectionMap = new HashMap<Integer, Set<String>>();
-		for(AbstractResource resource : object) {
+		for(RESTResource resource : object) {
 			ResourceHelper.setSerializeFields(resource, selector, fieldSelectionMap);
 		}
 		response.setResult(true, HttpStatus.OK_200, metadata, object);
@@ -361,7 +361,7 @@ public class APIController {
 		return response;
 	}
 
-	private ApiFieldSelectorResponse createFieldSelectorResponse(final AbstractResource object, FieldSelector selector) {
+	private ApiFieldSelectorResponse createFieldSelectorResponse(final RESTResource object, FieldSelector selector) {
 		ApiFieldSelectorResponse response = new ApiFieldSelectorResponse();
 		response.setResult(true, HttpStatus.OK_200, object);
 		response.setVersion(ApiVersion.v3);

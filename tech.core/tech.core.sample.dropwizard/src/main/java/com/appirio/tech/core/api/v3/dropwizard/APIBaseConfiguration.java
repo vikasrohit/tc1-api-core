@@ -16,31 +16,13 @@ import io.dropwizard.Configuration;
  */
 public class APIBaseConfiguration extends Configuration {
 	
-	List<String> v3models;
 	List<String> v3services;
-	List<String> v3exceptions;
 	
-	public void setV3models(List<String> v3models) {
-		this.v3models = v3models;
-	}
-	
-	public List<String> getV3models() {
-		return v3models;
-	}
-
 	public List<String> getV3services() {
 		return v3services;
 	}
 
 	public void setV3services(List<String> v3services) {
 		this.v3services = v3services;
-	}
-
-	public List<String> getV3exceptions() {
-		return v3exceptions;
-	}
-
-	public void setV3exceptions(List<String> v3exceptions) {
-		this.v3exceptions = v3exceptions;
 	}
 }

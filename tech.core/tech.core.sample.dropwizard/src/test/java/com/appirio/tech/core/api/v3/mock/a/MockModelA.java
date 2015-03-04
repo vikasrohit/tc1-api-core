@@ -13,8 +13,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 public class MockModelA extends AbstractIdResource {
 
-	public static final String RESOURCE_PATH = "mock_a_models";
-
 	private String strTest;
 	private Integer intTest;
 	private String dummyField = "dummy";
@@ -49,9 +47,5 @@ public class MockModelA extends AbstractIdResource {
 	}
 	public void setDummyField(String dummyField) {
 		this.dummyField = dummyField;
-	}
-
-	public String getRootResource() {
-		return RESOURCE_PATH;
 	}
 }

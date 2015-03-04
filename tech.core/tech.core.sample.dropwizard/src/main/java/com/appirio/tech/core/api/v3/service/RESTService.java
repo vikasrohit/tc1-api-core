@@ -8,18 +8,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 /**
- * Interface to define classes that handles API requests.
+ * Interface to define classes that handles RESTful API requests.
  * 
  * @author sudo
  *
  */
 public interface RESTService {
 	/**
-	 * Return the root resource path that this service class handles.
+	 * Return resource POJO class that this service handles.
 	 * 
 	 * @return
 	 */
 	@ApiMapping(visible=false)
 	@JsonIgnore
-	public String getRootResource();
+	public Class<? extends RESTResource> getResourceClass();
 }

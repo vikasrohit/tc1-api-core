@@ -9,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Path;
 
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.api.v3.dao.DaoBase;
@@ -21,23 +22,28 @@ import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.api.v3.request.SortOrder;
 import com.appirio.tech.core.api.v3.service.AbstractMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTPersistentService;
+import com.appirio.tech.core.api.v3.service.RESTResource;
 import com.appirio.tech.core.sample.exception.StorageException;
 import com.appirio.tech.core.sample.model.User;
 import com.appirio.tech.core.sample.storage.InMemoryUserStorage;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author sudo
  *
  */
+@Path("users")
 public class UserCRUDService extends AbstractMetadataService implements RESTPersistentService<User> {
 
 	private InMemoryUserStorage storage = InMemoryUserStorage.instance();
 	
+	@Override
 	@ApiMapping(visible = false)
-	public String getRootResource() {
-		return User.RESOURCE_PATH;
+	@JsonIgnore
+	public Class<? extends RESTResource> getResourceClass() {
+		return User.class;
 	}
-
+	
 	public User handleGet(FieldSelector selector, TCID recordId) throws Exception {
 		for(User user : storage.getUserList()) {
 			if(user.getId().equals(recordId)) {

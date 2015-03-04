@@ -29,8 +29,6 @@ public class InitializerTest {
 	@Test
 	public void testConfiguration() throws Exception {
 		APIBaseConfiguration config = RULE.getConfiguration();
-		Assert.assertNotNull(config.getV3models());
-		Assert.assertEquals(2, config.getV3models().size());
 		Assert.assertNotNull(config.getV3services());
 		Assert.assertEquals(3, config.getV3services().size());
 		

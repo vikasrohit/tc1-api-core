@@ -3,8 +3,11 @@
  */
 package com.appirio.tech.core.api.v3.controller;
 
+import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.ws.rs.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +16,11 @@ import com.appirio.tech.core.api.v3.dropwizard.APIBaseConfiguration;
 import com.appirio.tech.core.api.v3.exception.AppInitializationException;
 import com.appirio.tech.core.api.v3.exception.ResourceNotMappedException;
 import com.appirio.tech.core.api.v3.model.AbstractIdResource;
-import com.appirio.tech.core.api.v3.model.AbstractResource;
 import com.appirio.tech.core.api.v3.service.RESTActionService;
 import com.appirio.tech.core.api.v3.service.RESTMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTPersistentService;
 import com.appirio.tech.core.api.v3.service.RESTQueryService;
+import com.appirio.tech.core.api.v3.service.RESTResource;
 import com.appirio.tech.core.api.v3.service.RESTService;
 
 /**
@@ -37,14 +40,14 @@ public class ResourceFactory {
 	private static final ResourceFactory instance = new ResourceFactory();
 	private ResourceFactory() {}
 
-	private Map<String, Object> beans = new HashMap<String, Object>();
-	private Map<String, RESTQueryService<? extends AbstractResource>> queryServiceMap = new HashMap<String, RESTQueryService<? extends AbstractResource>>();
+	private Map<String, Object> serviceBeans = new HashMap<String, Object>();
+	private Map<String, RESTQueryService<? extends RESTResource>> queryServiceMap = new HashMap<String, RESTQueryService<? extends RESTResource>>();
 	private Map<String, RESTMetadataService> metadataServiceMap = new HashMap<String, RESTMetadataService>();
-	private Map<String, RESTPersistentService<? extends AbstractResource>> persistentServiceMap = new HashMap<String, RESTPersistentService<? extends AbstractResource>>();
+	private Map<String, RESTPersistentService<? extends RESTResource>> persistentServiceMap = new HashMap<String, RESTPersistentService<? extends RESTResource>>();
 	private Map<String, RESTActionService> actionServiceMap = new HashMap<String, RESTActionService>();
-	private Map<String, Class<? extends AbstractResource>> modelMap = new HashMap<String, Class<? extends AbstractResource>>();
+	private Map<String, Class<? extends RESTResource>> modelMap = new HashMap<String, Class<? extends RESTResource>>();
 	
-	public RESTQueryService<? extends AbstractResource> getQueryService(String resource) throws ResourceNotMappedException {
+	public RESTQueryService<? extends RESTResource> getQueryService(String resource) throws ResourceNotMappedException {
 		if(queryServiceMap.containsKey(resource)) {
 			return queryServiceMap.get(resource);
 		} else {
@@ -68,7 +71,7 @@ public class ResourceFactory {
 		}
 	}
 	
-	public Class<? extends AbstractResource> getResourceModel(String resource) throws Exception {
+	public Class<? extends RESTResource> getResourceModel(String resource) throws Exception {
 		if(modelMap.containsKey(resource)) {
 			return modelMap.get(resource);
 		} else {
@@ -90,38 +93,26 @@ public class ResourceFactory {
 	 * 
 	 * @param configuration
 	 */
-	@SuppressWarnings("unchecked")
 	protected void initialize(APIBaseConfiguration configuration) {
-		// Parse v3models, instantiate and hold pointers in this instance
-		for(String beanName : configuration.getV3models()) {
-			if(beans.containsKey(beanName)) continue;
-			try {
-				RESTService object = (RESTService)Class.forName(beanName).newInstance();
-				beans.put(beanName, object);
-				modelMap.put(object.getRootResource(), (Class<? extends AbstractResource>)object.getClass());
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				throw new AppInitializationException("Can not intanciate specified API bean:" + beanName, e);
-			}
-		}
-		
 		// Parse v3services, instantiate and hold pointers in this instance
 		for(String beanName : configuration.getV3services()) {
-			if(beans.containsKey(beanName)) continue;
+			if(serviceBeans.containsKey(beanName)) continue;
 			try {
 				RESTService object = (RESTService)Class.forName(beanName).newInstance();
-				beans.put(beanName, object);
+				serviceBeans.put(beanName, object);
 				if(object instanceof RESTQueryService) {
-					queryServiceMap.put(object.getRootResource(), (RESTQueryService<?>)object);
+					queryServiceMap.put(getPathAnnotation(object), (RESTQueryService<?>)object);
 				}
 				if(object instanceof RESTPersistentService) {
-					persistentServiceMap.put(object.getRootResource(), (RESTPersistentService<?>)object);
+					persistentServiceMap.put(getPathAnnotation(object), (RESTPersistentService<?>)object);
 				}
 				if(object instanceof RESTMetadataService) {
-					metadataServiceMap.put(object.getRootResource(), (RESTMetadataService)object);
+					metadataServiceMap.put(getPathAnnotation(object), (RESTMetadataService)object);
 				}
 				if(object instanceof RESTActionService) {
-					actionServiceMap.put(object.getRootResource(), (RESTActionService)object);
+					actionServiceMap.put(getPathAnnotation(object), (RESTActionService)object);
 				}
+				modelMap.put(getPathAnnotation(object), object.getResourceClass());
 			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | ClassCastException e) {
 				throw new AppInitializationException("Can not intanciate specified API bean or the bean does not implement RESTService interface:" + beanName, e);
 			}
@@ -130,6 +121,18 @@ public class ResourceFactory {
 		if(logger.isDebugEnabled()) {
 			logComplete();
 		}
+	}
+
+	/**
+	 * @param object
+	 */
+	private String getPathAnnotation(RESTService object) {
+		for(Annotation annotation : object.getClass().getDeclaredAnnotations()) {
+			if(annotation instanceof Path) {
+				return ((Path) annotation).value();
+			}
+		}
+		throw new ResourceInitializationException("Service class do not have @Path annotated");
 	}
 	
 	/**
