@@ -84,11 +84,11 @@
     $(document).ready(function() {
 
         $('.btn-login').click(function(e) {
-          location.href = "./login?retUrl=" + location.href;
+          location.href = "../v3/login?retUrl=" + location.href;
         });
 
         $('.btn-login-debug').click(function(e) {
-            var new_location = "./login?debug=true&retUrl=" + location.href;
+            var new_location = "../v3/login?debug=true&retUrl=" + location.href;
             alert("Redirecting to:\n" + new_location);
             location.href = new_location;
           });
