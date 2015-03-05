@@ -4,16 +4,15 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script>
-    //document.addEventListener( "DOMContentLoaded", function(){
+    document.addEventListener( "DOMContentLoaded", function(){
         // Save the JWT token.
-        localStorage.setItem('userJWTToken', "${auth0_id_token}");
-        localStorage.setItem('userAuth0AccessToken', "${auth0_access_token}");
+        localStorage.setItem('userJWTToken', "${jwtToken}");
         
+        <#if !debug>
         //Stop at this page on debug
-        if(!"${debug?c}") {
-            location.href = "${redirectUrl}";
-        }
-    //});
+        location.href = "${redirectUrl}";
+        </#if>
+    });
     
     function redirect() {
         location.href = "${redirectUrl}";
@@ -24,8 +23,7 @@
   <h3>Redirect page</h3>
   <p>
   <dl>
-    <dt>auth0 jwt token</dt><dd>${auth0_id_token}</dd>
-    <dt>auth0 access token</dt><dd>${auth0_access_token}</dd>
+    <dt>jwt token</dt><dd>${jwtToken}</dd>
   </dl>
   Token has been set to localStorage 'userJWTToken' and 'userAuth0AccessToken'.<br/>
   Proceeding pages within the same domain can access these token via localStorage.getItem().

@@ -4,8 +4,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>API v3 static web application</title>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script type="text/javascript" src="./jwt-decode.min.js"></script>
 <!-- auth0.com -->
+<script src="//cdn.auth0.com/w2/auth0-widget-5.2.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <script>
     function callAPI() {
         var endpoint = $("#host").val() + $("#endpoint").val() + $("#resource").val();
@@ -32,9 +33,22 @@
     }
 
     function decodeJwt() {
-        var decoded = jwt_decode(localStorage.getItem("userJWTToken"));
-        console.log(decoded);
-        alert(JSON.stringify(decoded, null, 2));
+        var endpoint = $("#host").val() + "/pub/decode?token=" + localStorage.getItem("userJWTToken");
+        $.ajax({
+            type: "GET",
+            url : endpoint,
+            dataType : 'json',
+            success : function(data) {
+                var popup = window.open("", "", "location=yes, menubar=yes, toolbar=no");
+                popup.document.write('<html><body>Decoded: <span id="status"></span></body></html>');
+                popup.document.getElementById('status').innerHTML = '<pre>' + JSON.stringify(data, undefined, 2) + '</pre>';
+
+            },
+        	error : function(xhr,status,error) {
+        	    var context = "status:" + xhr.status + "<br/>context:<br/><pre>" + error + "</pre>";
+                window.confirm(context)
+        	}
+        });
     }
 
     function syntaxHighlight(json) {
@@ -81,6 +95,7 @@
 
         $('.btn-logout').click(function(e) {
             localStorage.removeItem('userJWTToken');
+            localStorage.removeItem('userAuth0AccessToken');
             userProfile = null;
             location.reload(true);
         });

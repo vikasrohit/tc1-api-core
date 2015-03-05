@@ -4,11 +4,15 @@
 package com.appirio.tech.core.service.identity.ctrl;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,11 +25,17 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.appirio.tech.core.auth.JWTAuthenticator;
 import com.appirio.tech.core.service.identity.exception.AuthenticationException;
 import com.appirio.tech.core.service.identity.view.CallbackView;
+import com.auth0.jwt.JWTSigner;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.JWTVerifyException;
+import com.auth0.jwt.JWTSigner.Options;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -41,8 +51,8 @@ public class CallbackWebflowCtrl {
 
 	private static final Logger logger = LoggerFactory.getLogger(CallbackWebflowCtrl.class);
 
-	private String clientId		= "JFDo7HMkf0q2CkVFHojy3zHWafziprhT";
 	private String clientDomain = "topcoder-dev.auth0.com";
+	private String clientId		= "JFDo7HMkf0q2CkVFHojy3zHWafziprhT";
 	private String clientSecret = "0fjm47MSE1ea18WRPX9v3K6EM3iI8dc0OF5VNc-NMTNWEiwBwsmfjEYqOBW9HLhY";
 
 	/**
@@ -66,8 +76,6 @@ public class CallbackWebflowCtrl {
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse resp) throws Exception {
 		
-		String auth0_id_token;
-		String auth0_access_token;
 		boolean debug = false;
 		
 		Auth0Credential credential;
@@ -79,8 +87,7 @@ public class CallbackWebflowCtrl {
 			credential.setIdToken(idToken);
 			credential.setTokenType(tokenType);
 		}
-		auth0_access_token = credential.getAccessToken();
-		auth0_id_token = credential.getIdToken();
+		String jwt_token = createJWTToken(credential.getIdToken());
 		
 		//parse the state to obtain redirectUrl and debug
 		String[] stateArray = URLDecoder.decode(state, "UTF-8").split("&");
@@ -90,13 +97,31 @@ public class CallbackWebflowCtrl {
 		}
 		String redirectUrl = valMap.get("retUrl");
 		if(valMap.get("setParam").equalsIgnoreCase("true")) {
-			redirectUrl += "?userJWTToken=" + credential.getIdToken();
+			redirectUrl += "?userJWTToken=" + jwt_token;
 		}
 		if(valMap.get("debug").equalsIgnoreCase("true")) {
 			debug = true;
 		}
 		
-		return new CallbackView(auth0_id_token, auth0_access_token, debug, redirectUrl);
+		return new CallbackView(jwt_token, debug, redirectUrl);
+	}
+
+	private String createJWTToken(String auth0Token) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, SignatureException, IOException, JWTVerifyException {
+		JWTVerifier verifier = new JWTVerifier(Base64.decodeBase64(clientSecret));
+		Map<String, Object> map = verifier.verify(auth0Token);
+		String userId = map.get("user_id").toString();
+
+		Map<String, Object> claims = new HashMap<String, Object>();
+		String[] parts = userId.split("\\|");
+		claims.put(JWTAuthenticator.JWT_USER_ID, parts[parts.length-1]);
+		claims.put("iss", "appirio:v3:150306");
+		Options options = new Options();
+		options.setExpirySeconds(60*10); //10 min.
+		options.setIssuedAt(true);
+		options.setJwtId(true);
+		
+		JWTSigner signer = new JWTSigner(clientSecret);
+		return signer.sign(claims, options);
 	}
 
 	/**

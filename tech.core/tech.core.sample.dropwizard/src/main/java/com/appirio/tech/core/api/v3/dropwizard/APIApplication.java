@@ -10,6 +10,7 @@ import io.dropwizard.setup.Environment;
 import com.appirio.tech.core.api.v3.controller.APIController;
 import com.appirio.tech.core.api.v3.controller.ResourceFactory;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
+import com.appirio.tech.core.auth.JWTAuthProvider;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 /**
@@ -44,6 +45,8 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 		environment.jersey().setUrlPattern("/v3/*");
 		final APIController resource = new APIController(ResourceFactory.build(configuration));
 		environment.jersey().register(resource);
+		environment.jersey().register(new JWTAuthProvider());
+		environment.jersey().register(new RuntimeExceptionMapper());
 	}
 
 	public static void main(String[] args) throws Exception {
