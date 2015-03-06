@@ -5,7 +5,7 @@ package com.appirio.tech.core.api.v3.request;
 
 
 /**
- * Parameter parsing class for /v2 query string.
+ * Parameter parsing class for /v3 query string.
  * 
  * @author sudo
  *

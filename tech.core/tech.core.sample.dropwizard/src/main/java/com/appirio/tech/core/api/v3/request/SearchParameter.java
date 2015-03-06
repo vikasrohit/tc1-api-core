@@ -17,7 +17,7 @@ import com.appirio.tech.core.api.v3.exception.APIParseException;
  * ..../objects/{objectId}?<object field A>=<value A>&<object field B>=<value B>&.....
  * in this case, this class holds map of ({<object field A>, <value A>}, {<object field B>, <value B>})
  * 
- * should include facet, range queries in future.
+ * TODO: include facet, range queries in future.
  * 
  * @author sudo
  *
