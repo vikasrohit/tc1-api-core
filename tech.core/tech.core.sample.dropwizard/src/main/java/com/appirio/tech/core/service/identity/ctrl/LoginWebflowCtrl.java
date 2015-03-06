@@ -29,7 +29,7 @@ public class LoginWebflowCtrl {
 	public LoginView getLoginPage(
 			@QueryParam("retUrl") String retUrl,
 			@DefaultValue("false") @QueryParam("setParam") Boolean setParam,
-			@DefaultValue("false") @QueryParam("debug") Boolean debug,
+			@DefaultValue("false") @QueryParam("debug") Boolean debug,	// a flag to debug the webflow
 			@Context HttpServletRequest request) throws Exception {
 		return new LoginView(retUrl, setParam, debug, request);
 	}

@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script>
-    document.addEventListener( "DOMContentLoaded", function(){
+    //document.addEventListener( "DOMContentLoaded", function(){
         // Save the JWT token.
         localStorage.setItem('userJWTToken', "${jwtToken}");
         
@@ -12,7 +12,7 @@
         //Stop at this page on debug
         location.href = "${redirectUrl}";
         </#if>
-    });
+    //});
     
     function redirect() {
         location.href = "${redirectUrl}";

@@ -45,7 +45,9 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 		environment.jersey().setUrlPattern("/v3/*");
 		final APIController resource = new APIController(ResourceFactory.build(configuration));
 		environment.jersey().register(resource);
+		//Register Authentication Provider to validate JWT with @Auth annotation
 		environment.jersey().register(new JWTAuthProvider());
+		//Catch all exception and wrap to V3 format
 		environment.jersey().register(new RuntimeExceptionMapper());
 	}
 

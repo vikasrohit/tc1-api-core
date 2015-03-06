@@ -1,4 +1,4 @@
-package com.appirio.tech.core.api.v3.exception;
+package com.appirio.tech.core.api.v3.response;
 
 import org.eclipse.jetty.http.HttpStatus;
 

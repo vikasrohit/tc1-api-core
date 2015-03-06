@@ -15,7 +15,7 @@ public class APIParseException extends APIRuntimeException {
 	 * 
 	 */
 	public APIParseException() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 
 	/**
@@ -23,7 +23,6 @@ public class APIParseException extends APIRuntimeException {
 	 */
 	public APIParseException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -31,7 +30,6 @@ public class APIParseException extends APIRuntimeException {
 	 */
 	public APIParseException(Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -40,7 +38,6 @@ public class APIParseException extends APIRuntimeException {
 	 */
 	public APIParseException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 }

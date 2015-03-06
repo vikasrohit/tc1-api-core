@@ -54,6 +54,7 @@ public class CallbackWebflowCtrl {
 	private String clientDomain = "topcoder-dev.auth0.com";
 	private String clientId		= "JFDo7HMkf0q2CkVFHojy3zHWafziprhT";
 	private String clientSecret = "0fjm47MSE1ea18WRPX9v3K6EM3iI8dc0OF5VNc-NMTNWEiwBwsmfjEYqOBW9HLhY";
+	private boolean debug = false; //a flag to debug Auth0 flow
 
 	/**
 	 * Callback from Auth0 service.
@@ -70,22 +71,14 @@ public class CallbackWebflowCtrl {
 	public CallbackView getCallbackPage(
 			@QueryParam("state") String state,	//Value that survives redirects
 			@QueryParam("code") String code,	//Authorization code from Auth0
-			@QueryParam("access_token") String accessToken,
-			@QueryParam("id_token") String idToken,
-			@QueryParam("token_type") String tokenType,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse resp) throws Exception {
-		
-		boolean debug = false;
 		
 		Auth0Credential credential;
 		if(code!=null) {
 			credential = getAuth0AccessTokenFromCode(code, request.getRequestURL().toString());
 		} else {
-			credential = new Auth0Credential();
-			credential.setAccessToken(accessToken);
-			credential.setIdToken(idToken);
-			credential.setTokenType(tokenType);
+			throw new AuthenticationException("Failed to obtain valid code from Auth0");
 		}
 		String jwt_token = createJWTToken(credential.getIdToken());
 		
@@ -109,12 +102,13 @@ public class CallbackWebflowCtrl {
 	private String createJWTToken(String auth0Token) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, SignatureException, IOException, JWTVerifyException {
 		JWTVerifier verifier = new JWTVerifier(Base64.decodeBase64(clientSecret));
 		Map<String, Object> map = verifier.verify(auth0Token);
+		logger.debug("obtained auth0 token:" + map);
 		String userId = map.get("user_id").toString();
 
 		Map<String, Object> claims = new HashMap<String, Object>();
 		String[] parts = userId.split("\\|");
 		claims.put(JWTAuthenticator.JWT_USER_ID, parts[parts.length-1]);
-		claims.put("iss", "appirio:v3:150306");
+		claims.put("iss", "appirio:v3:150301");
 		Options options = new Options();
 		options.setExpirySeconds(60*10); //10 min.
 		options.setIssuedAt(true);
