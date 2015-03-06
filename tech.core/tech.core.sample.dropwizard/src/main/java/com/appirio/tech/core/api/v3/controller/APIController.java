@@ -1,5 +1,7 @@
 package com.appirio.tech.core.api.v3.controller;
 
+import io.dropwizard.auth.Auth;
+
 import java.rmi.server.UID;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +41,7 @@ import com.appirio.tech.core.api.v3.service.RESTMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTPersistentService;
 import com.appirio.tech.core.api.v3.service.RESTQueryService;
 import com.appirio.tech.core.api.v3.service.RESTResource;
+import com.appirio.tech.core.auth.AuthUser;
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
@@ -146,6 +149,7 @@ public class APIController {
 	@Path("/{resource}")
 	@Timed
 	public ApiResponse getObjects(
+//			@Auth AuthUser user,
 			@PathParam("resource") String resource,
 			@QueryParam(value="fields") Optional<String> fieldsIn,
 			@QueryParam(value="filter") Optional<String> filterIn,

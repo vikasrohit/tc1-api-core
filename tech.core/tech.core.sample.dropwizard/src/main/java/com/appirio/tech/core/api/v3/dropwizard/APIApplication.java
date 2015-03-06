@@ -12,6 +12,7 @@ import io.dropwizard.setup.Environment;
 import com.appirio.tech.core.api.v3.controller.APIController;
 import com.appirio.tech.core.api.v3.controller.ResourceFactory;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
+import com.appirio.tech.core.auth.JWTAuthProvider;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 import org.skife.jdbi.v2.DBI;
@@ -64,6 +65,8 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 		ResourceFactory.instance().registerObject(SequenceDAO.class, seqDao);
 		
 		environment.jersey().register(resource);
+		environment.jersey().register(new JWTAuthProvider());
+		environment.jersey().register(new RuntimeExceptionMapper());
 	}
 
 	public static void main(String[] args) throws Exception {
