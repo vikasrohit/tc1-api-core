@@ -3,9 +3,15 @@
  */
 package com.appirio.tech.core.api.v3.dropwizard;
 
+import io.dropwizard.Configuration;
+import io.dropwizard.db.DataSourceFactory;
+
 import java.util.List;
 
-import io.dropwizard.Configuration;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Configuration class to be passed upon DropWizard boot sequence.
@@ -24,5 +30,14 @@ public class APIBaseConfiguration extends Configuration {
 
 	public void setV3services(List<String> v3services) {
 		this.v3services = v3services;
+	}
+	
+	@Valid
+	@NotNull
+	@JsonProperty
+	private DataSourceFactory database = new DataSourceFactory();
+
+	public DataSourceFactory getDataSourceFactory() {
+		return database;
 	}
 }

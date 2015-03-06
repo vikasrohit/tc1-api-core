@@ -42,10 +42,20 @@ public class ResourceFactory {
 
 	private Map<String, Object> serviceBeans = new HashMap<String, Object>();
 	private Map<String, RESTQueryService<? extends RESTResource>> queryServiceMap = new HashMap<String, RESTQueryService<? extends RESTResource>>();
+	private boolean initialized = false;
 	private Map<String, RESTMetadataService> metadataServiceMap = new HashMap<String, RESTMetadataService>();
 	private Map<String, RESTPersistentService<? extends RESTResource>> persistentServiceMap = new HashMap<String, RESTPersistentService<? extends RESTResource>>();
 	private Map<String, RESTActionService> actionServiceMap = new HashMap<String, RESTActionService>();
 	private Map<String, Class<? extends RESTResource>> modelMap = new HashMap<String, Class<? extends RESTResource>>();
+
+    private Map<Object, Object> objectMap = new HashMap<Object, Object>();
+    public void registerObject(Object key, Object obj) {
+            objectMap.put(key, obj);
+    }
+    public Object getObject(Object key) {
+            return objectMap.get(key);
+    }
+
 	
 	public RESTQueryService<? extends RESTResource> getQueryService(String resource) throws ResourceNotMappedException {
 		if(queryServiceMap.containsKey(resource)) {
@@ -121,6 +131,9 @@ public class ResourceFactory {
 		if(logger.isDebugEnabled()) {
 			logComplete();
 		}
+		
+		// completed
+		this.initialized = true;
 	}
 
 	/**
@@ -187,6 +200,9 @@ public class ResourceFactory {
 	}
 	
 	public static ResourceFactory instance() {
+		if(!instance.initialized) {
+			throw new AppInitializationException("ResourceFactory has not finished initializing yet.");
+		}
 		return instance;
 	}
 }

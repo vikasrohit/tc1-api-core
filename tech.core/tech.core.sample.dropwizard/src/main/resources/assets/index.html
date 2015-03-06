@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Dummy Reg Page</title>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script type="text/javascript">
+	<!--
+    function register() {
+        var endpoint = "http://localhost:8080/v3/users";
+        var payload = JSON.stringify(
+            { param : {
+            	handle: $("#handle").val(),
+            	email: $("#email").val(),
+            	firstName: $("#fname").val(),
+            	lastName: $("#sname").val()
+            }});
+        $.ajax({
+            url : endpoint,
+            type : 'POST',
+            contentType : 'application/json',
+            dataType : 'json',
+            data: payload,
+            success : function(data) {
+                console.log(data);
+            },
+        	error : function(xhr,status,error) {
+        		console.log(status);
+        		console.log(error);
+        	}
+        });
+    }
+	-->
+	</script>
+	<style type="text/css">
+	<!--
+	-->
+	</style>
+</head>
+<body>
+	<div>
+		<dl>
+			<dt>handle:</dt><dd><input type=text id="handle" value="jdoe" size=70/></dd>
+			<dt>email: </dt><dd><input type=text id="email" value="jdoe@topcoder.com" size=70/></dd>
+			<dt>fiest name: </dt><dd><input type=text id="fname" value="John" size=70/></dd>
+			<dt>last name: </dt><dd><input type=text id="sname" value="Doe" size=70/></dd>
+		</dl>
+    	<button type="button" onclick="register()">Register</button>
+	</div>
+</body>
+</html>

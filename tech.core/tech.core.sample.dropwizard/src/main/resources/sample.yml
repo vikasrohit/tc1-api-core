@@ -6,8 +6,26 @@
 #   2. Run from custom main() -- Alternatively, you can create you own custom Application and Configuration
 #      classes of DropWizard, and implement V3 API by yourself.
 v3services: 
-  - com.appirio.tech.core.sample.services.UserCRUDService
+#  - com.appirio.tech.core.sample.services.UserCRUDService
+  - com.appirio.tech.core.identity.services.UserService
+  - com.appirio.tech.core.identity.services.CredentialService
 # End registration of V3 API framework
+
+database:
+  # the name of your JDBC driver
+  driverClass: com.informix.jdbc.IfxDriver
+
+  # the username
+  user: coder
+
+  # the password
+  password: Qn8TZxFFD77tzQwc
+
+  # the JDBC URL
+  #url: jdbc:informix-sqli://oltp01.prod.topcoder.com:2020/informixoltp:INFORMIXSERVER=informixoltp_tcp
+  url: jdbc:informix-sqli://localhost:7995/common_oltp:INFORMIXSERVER=informixoltp_tcp
+
+  validationQuery: SELECT TODAY FROM systables WHERE tabid = 1
 
 server:
   applicationConnectors:
@@ -25,5 +43,6 @@ logging:
   loggers:
     # Sets the level for 'com.appirio.tech' to DEBUG.
     com.appirio.tech: DEBUG
+    org.skife.jdbi: DEBUG
   appenders:
     - type: console
