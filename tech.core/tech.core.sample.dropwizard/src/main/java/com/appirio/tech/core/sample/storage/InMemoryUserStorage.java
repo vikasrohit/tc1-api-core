@@ -12,7 +12,7 @@ import org.joda.time.DateTime;
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.api.v3.request.FilterParameter;
 import com.appirio.tech.core.sample.exception.StorageException;
-import com.appirio.tech.core.sample.model.User;
+import com.appirio.tech.core.sample.representation.User;
 
 
 /**

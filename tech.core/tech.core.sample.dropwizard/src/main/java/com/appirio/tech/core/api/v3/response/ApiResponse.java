@@ -6,12 +6,13 @@ package com.appirio.tech.core.api.v3.response;
 import java.io.IOException;
 import java.rmi.server.UID;
 
+
 import com.appirio.tech.core.api.v3.ApiVersion;
+import com.appirio.tech.core.api.v3.dropwizard.APIApplication;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 /**
@@ -23,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 public class ApiResponse {
-	public static ObjectMapper JACKSON_OBJECT_MAPPER; //Injected during DW application boot
 	private String id;
 	private Result result;
 	private ApiVersion version;
@@ -66,9 +66,10 @@ public class ApiResponse {
 	 */
 	@JsonIgnore
 	public <T> T getContentResource(Class<T> typeParameterClass) throws JsonParseException, JsonMappingException, JsonProcessingException, IOException {
-		return JACKSON_OBJECT_MAPPER.readValue(
-				JACKSON_OBJECT_MAPPER.writeValueAsString(getResult().getContent()), typeParameterClass);
+		return APIApplication.JACKSON_OBJECT_MAPPER.readValue(
+				APIApplication.JACKSON_OBJECT_MAPPER.writeValueAsString(getResult().getContent()), typeParameterClass);
 	}
+	
 	@Override
 	public String toString() {
 		return "{id:" + id + "}, {result:" + result + "}";

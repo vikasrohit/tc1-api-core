@@ -6,6 +6,7 @@ package com.appirio.tech.core.api.v3;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
@@ -14,7 +15,6 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import com.appirio.tech.core.api.v3.controller.ResourceFactory;
 import com.appirio.tech.core.api.v3.dropwizard.APIApplication;
 import com.appirio.tech.core.api.v3.dropwizard.APIBaseConfiguration;
 import com.appirio.tech.core.api.v3.mock.a.MockModelA;
@@ -71,7 +71,7 @@ public class EndpointTest {
 
 	@Test
 	public void testPost() throws Exception {
-		((MockPersistentService)ResourceFactory.instance().getPersistentService("mock_b_models")).clearData();
+		MockPersistentService.clearData();
 		
 		//Prepare 2 objects
 		MockModelB modelA = new MockModelB();
@@ -118,7 +118,7 @@ public class EndpointTest {
 
 	@Test
 	public void testPut() throws Exception {
-		((MockPersistentService)ResourceFactory.instance().getPersistentService("mock_b_models")).clearData();
+		MockPersistentService.clearData();
 
 		//Insert new object
 		MockModelB modelB = new MockModelB();
@@ -153,7 +153,8 @@ public class EndpointTest {
 
 	@Test
 	public void testDelete() throws Exception {
-		((MockPersistentService)ResourceFactory.instance().getPersistentService("mock_b_models")).clearData();
+		MockPersistentService.clearData();
+		Map<TCID, MockModelB> storageMap = MockPersistentService.getStorage();
 		
 		//Insert 1 object
 		MockModelB modelA = new MockModelB();
@@ -165,10 +166,12 @@ public class EndpointTest {
 		Client client = new Client();
 		ClientResponse response = client.resource(String.format("http://localhost:%d/v3/mock_b_models", RULE.getLocalPort()))
 				.accept("application/json").type("application/json").post(ClientResponse.class, requestA);
+		Assert.assertEquals(1, storageMap.size());
 
 		response = client.resource(
 				String.format("http://localhost:%d/v3/mock_b_models/%s", RULE.getLocalPort(), 
 						response.getEntity(ApiResponse.class).getContentResource(MockModelB.class).getId())).delete(ClientResponse.class);
+		Assert.assertEquals(0, storageMap.size());
 		
 		//Assert by getting everything
 		response = client.resource(

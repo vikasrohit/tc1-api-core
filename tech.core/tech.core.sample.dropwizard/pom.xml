@@ -128,6 +128,19 @@
       <artifactId>commons-codec</artifactId>
       <version>1.4</version>
     </dependency>
+<!-- FOR V3API -->
+    <!-- Scan classes with annotation on APIApplication -->
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>0.9.9-RC1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>18.0</version>
+    </dependency>
+
   </dependencies>
 
   <distributionManagement>

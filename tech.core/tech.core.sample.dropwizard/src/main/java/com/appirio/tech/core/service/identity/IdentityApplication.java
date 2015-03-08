@@ -32,12 +32,13 @@ public class IdentityApplication extends APIApplication {
 	@Override
 	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
 		super.run(configuration, environment);
-		
+		/*
 		LoginWebflowCtrl ctrl = new LoginWebflowCtrl();
 		environment.jersey().register(ctrl);
 		
 		CallbackWebflowCtrl callbackWebflowCtrl = new CallbackWebflowCtrl();
 		environment.jersey().register(callbackWebflowCtrl);
+		*/
 	}
 	
 	/**

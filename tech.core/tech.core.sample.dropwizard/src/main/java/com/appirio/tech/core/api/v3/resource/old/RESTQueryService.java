@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.appirio.tech.core.api.v3.service;
+package com.appirio.tech.core.api.v3.resource.old;
 
 import java.util.List;
 

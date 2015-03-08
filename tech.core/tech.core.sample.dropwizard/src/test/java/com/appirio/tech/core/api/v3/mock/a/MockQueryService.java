@@ -9,42 +9,52 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import com.appirio.tech.core.api.v3.TCID;
-import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
-import com.appirio.tech.core.api.v3.service.RESTQueryService;
-import com.appirio.tech.core.api.v3.service.RESTResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.appirio.tech.core.api.v3.request.annotation.APIFieldParam;
+import com.appirio.tech.core.api.v3.request.annotation.APIQueryParam;
+import com.appirio.tech.core.api.v3.resource.GetResource;
+import com.appirio.tech.core.api.v3.response.ApiResponse;
+import com.appirio.tech.core.api.v3.response.ApiResponseFactory;
+import com.appirio.tech.core.sample.representation.User;
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Optional;
 
 /**
  * @author sudo
  *
  */
 @Path("mock_a_models")
-public class MockQueryService implements RESTQueryService<MockModelA> {
+@Produces(MediaType.APPLICATION_JSON)
+public class MockQueryService implements GetResource {
 
 	private Map<TCID, MockModelA> mockStorage = new HashMap<TCID, MockModelA>();
 	
 	@Override
-	@ApiMapping(visible = false)
-	@JsonIgnore
-	public Class<? extends RESTResource> getResourceClass() {
-		return MockModelA.class;
-	}
-	
-	public MockModelA handleGet(FieldSelector selector, TCID recordId) throws Exception {
+	@GET
+	@Path("/{resourceId}")
+	@Timed
+	public ApiResponse getObject(@PathParam("resourceId") TCID recordId,
+			@APIFieldParam(repClass = User.class) FieldSelector selector, @Context HttpServletRequest request)
+			throws Exception {
 		return null;
 	}
 
-	public List<MockModelA> handleGet(HttpServletRequest request, QueryParameter query) throws Exception {
+	@Override
+	@GET
+	@Timed
+	public ApiResponse getObjects(@APIQueryParam(repClass = User.class) QueryParameter query,
+			@QueryParam("include") Optional<String> includeIn, @Context HttpServletRequest request) throws Exception {
 		List<MockModelA> result = new ArrayList<MockModelA>(mockStorage.values());
-		return result;
-	}
-
-	public void insertModel(MockModelA model) {
-		mockStorage.put(model.getId(), model);
+		return ApiResponseFactory.createFieldSelectorResponse(result, query.getSelector());
 	}
 }

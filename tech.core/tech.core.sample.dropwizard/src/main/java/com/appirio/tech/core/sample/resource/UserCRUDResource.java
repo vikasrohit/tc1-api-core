@@ -1,60 +1,77 @@
 /**
  * 
  */
-package com.appirio.tech.core.sample.services;
+package com.appirio.tech.core.sample.resource;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
 
 import com.appirio.tech.core.api.v3.TCID;
-import com.appirio.tech.core.api.v3.dao.DaoBase;
 import com.appirio.tech.core.api.v3.metadata.CountableMetadata;
 import com.appirio.tech.core.api.v3.metadata.Metadata;
-import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
 import com.appirio.tech.core.api.v3.request.FilterParameter;
+import com.appirio.tech.core.api.v3.request.PostPutRequest;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.api.v3.request.SortOrder;
-import com.appirio.tech.core.api.v3.service.AbstractMetadataService;
-import com.appirio.tech.core.api.v3.service.RESTPersistentService;
-import com.appirio.tech.core.api.v3.service.RESTResource;
+import com.appirio.tech.core.api.v3.request.annotation.APIFieldParam;
+import com.appirio.tech.core.api.v3.request.annotation.APIQueryParam;
+import com.appirio.tech.core.api.v3.resource.DDLResource;
+import com.appirio.tech.core.api.v3.resource.GetResource;
+import com.appirio.tech.core.api.v3.response.ApiResponse;
+import com.appirio.tech.core.api.v3.response.ApiResponseFactory;
 import com.appirio.tech.core.sample.exception.StorageException;
-import com.appirio.tech.core.sample.model.User;
+import com.appirio.tech.core.sample.representation.User;
 import com.appirio.tech.core.sample.storage.InMemoryUserStorage;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Optional;
 
 /**
  * @author sudo
  *
  */
 @Path("users")
-public class UserCRUDService extends AbstractMetadataService implements RESTPersistentService<User> {
+@Produces(MediaType.APPLICATION_JSON)
+public class UserCRUDResource implements GetResource, DDLResource {
 
 	private InMemoryUserStorage storage = InMemoryUserStorage.instance();
 	
 	@Override
-	@ApiMapping(visible = false)
-	@JsonIgnore
-	public Class<? extends RESTResource> getResourceClass() {
-		return User.class;
-	}
-	
-	public User handleGet(FieldSelector selector, TCID recordId) throws Exception {
+	@GET
+	@Path("/{resourceId}")
+	@Timed
+	public ApiResponse getObject(@PathParam("resourceId") TCID recordId,
+			@APIFieldParam(repClass = User.class) FieldSelector selector, @Context HttpServletRequest request)
+			throws Exception {
 		for(User user : storage.getUserList()) {
 			if(user.getId().equals(recordId)) {
-				return user;
+				return ApiResponseFactory.createFieldSelectorResponse(user, selector);
 			}
 		}
 		return null;
 	}
 
-	public List<User> handleGet(HttpServletRequest request, QueryParameter query) throws Exception {
+	@Override
+	@GET
+	@Timed
+	public ApiResponse getObjects(@APIQueryParam(repClass = User.class) QueryParameter query,
+			@QueryParam("include") Optional<String> includeIn, @Context HttpServletRequest request) throws Exception {
 		FilterParameter parameter = query.getFilter();
 		List<User> resultList = storage.getFilteredUserList(parameter);
 		
@@ -103,38 +120,46 @@ public class UserCRUDService extends AbstractMetadataService implements RESTPers
 			resultList = resultList.subList(0, query.getLimitQuery().getLimit());
 		}
 		
-		return resultList;
-	}
-
-	public TCID handlePost(HttpServletRequest request, User object) throws Exception {
-		object.setCreatedAt(new DateTime());
-		object.setModifiedAt(new DateTime());
-		return storage.insertUser(object).getId();
-	}
-
-	public TCID handlePut(HttpServletRequest request, User object) throws Exception {
-		object.setModifiedAt(new DateTime());
-		storage.updateUser(object);
-		return object.getId();
-	}
-
-	public void handleDelete(HttpServletRequest request, TCID id) throws Exception {
-		storage.deleteUser(id);
+		return ApiResponseFactory.createFieldSelectorResponse(resultList, getMetadata(request, query), query.getSelector());
 	}
 
 	@Override
+	@POST
+	@Timed
+	public ApiResponse createObject(@Valid PostPutRequest postRequest, @Context HttpServletRequest request)
+			throws Exception {
+		User object = (User)postRequest.getParamObject(User.class);
+		object.setCreatedAt(new DateTime());
+		object.setModifiedAt(new DateTime());
+		return ApiResponseFactory.createResponse(storage.insertUser(object).getId());
+	}
+
+	@Override
+	@PUT
+	@Path("/{resourceId}")
+	@Timed
+	public ApiResponse updateObject(@PathParam("resourceId") String resourceId, @Valid PostPutRequest putRequest,
+			@Context HttpServletRequest request) throws Exception {
+		User object = (User)putRequest.getParamObject(User.class);
+		object.setModifiedAt(new DateTime());
+		storage.updateUser(object);
+		return ApiResponseFactory.createResponse(object.getId());
+	}
+
+	@Override
+	@DELETE
+	@Path("/{resourceId}")
+	@Timed
+	public ApiResponse deleteObject(@PathParam("resourceId") String resourceId, @Context HttpServletRequest request)
+			throws Exception {
+		storage.deleteUser(new TCID(resourceId));
+		return ApiResponseFactory.createResponse(new TCID(resourceId));
+	}
+
 	public Metadata getMetadata(HttpServletRequest request, QueryParameter query) throws Exception {
 		CountableMetadata metadata = new CountableMetadata();
 		metadata.setTotalCount(storage.getFilteredUserList(query.getFilter()).size());
-		populateFieldInfo(metadata);
+		//populateFieldInfo(metadata);
 		return metadata;
 	}
-	
-	/**
-	 * We're not going to use this method.
-	 */
-	public DaoBase<User> getResourceDao() {
-		return null;
-	}
-
 }

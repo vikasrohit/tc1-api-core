@@ -68,14 +68,14 @@ public class FieldSelector {
 		this.rootName = rootName;
 	}
 	/**
-	 * returns true if this {@link FieldSelector} has at least one child field
+	 * returns true if this {@link APIFieldParam} has at least one child field
 	 * @return
 	 */
 	public boolean hasChild() {
 		return children!=null && !children.isEmpty();
 	}
 	/**
-	 * returns true if this {@link FieldSelector} has child field of given name
+	 * returns true if this {@link APIFieldParam} has child field of given name
 	 * 
 	 * @param childFieldName
 	 * @return
@@ -94,7 +94,7 @@ public class FieldSelector {
 	}
 	/**
 	 * Helper class to add fields easily. The method will return this instance.
-	 * example usage: FieldSelector selector = new FieldSelector().addField("id").addField("name");
+	 * example usage: APIFieldParam selector = new APIFieldParam().addField("id").addField("name");
 	 * 
 	 * @param fieldName
 	 * @return

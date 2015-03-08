@@ -1,12 +1,13 @@
 /**
  * 
  */
-package com.appirio.tech.core.api.v3.service;
+package com.appirio.tech.core.api.v3.resource;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.appirio.tech.core.api.v3.metadata.Metadata;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
+import com.appirio.tech.core.api.v3.resource.old.RESTMetadataService;
 
 /**
  * @author sudo

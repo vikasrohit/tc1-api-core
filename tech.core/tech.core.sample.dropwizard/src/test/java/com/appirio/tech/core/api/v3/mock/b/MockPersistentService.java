@@ -5,28 +5,38 @@ package com.appirio.tech.core.api.v3.mock.b;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
 
 import com.appirio.tech.core.api.v3.TCID;
-import com.appirio.tech.core.api.v3.dao.DaoBase;
 import com.appirio.tech.core.api.v3.metadata.CountableMetadata;
 import com.appirio.tech.core.api.v3.metadata.Metadata;
-import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
+import com.appirio.tech.core.api.v3.request.PostPutRequest;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
+import com.appirio.tech.core.api.v3.request.annotation.APIFieldParam;
+import com.appirio.tech.core.api.v3.request.annotation.APIQueryParam;
+import com.appirio.tech.core.api.v3.resource.DDLResource;
+import com.appirio.tech.core.api.v3.resource.GetResource;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
-import com.appirio.tech.core.api.v3.service.AbstractMetadataService;
-import com.appirio.tech.core.api.v3.service.RESTActionService;
-import com.appirio.tech.core.api.v3.service.RESTPersistentService;
-import com.appirio.tech.core.api.v3.service.RESTResource;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.appirio.tech.core.api.v3.response.ApiResponseFactory;
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Optional;
 
 /**
  * Mock Service class that handles all the REST calls.
@@ -35,68 +45,92 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  *
  */
 @Path("mock_b_models")
-public class MockPersistentService extends AbstractMetadataService implements RESTActionService, RESTPersistentService<MockModelB> {
+@Produces(MediaType.APPLICATION_JSON)
+public class MockPersistentService implements GetResource, DDLResource {
 
 	private AtomicInteger integer = new AtomicInteger(100);
-	private Map<TCID, MockModelB> mockStorage = new HashMap<TCID, MockModelB>();
+	private static Map<TCID, MockModelB> mockStorage = new HashMap<TCID, MockModelB>();
 
 	@Override
-	@ApiMapping(visible = false)
-	@JsonIgnore
-	public Class<? extends RESTResource> getResourceClass() {
-		return MockModelB.class;
-	}
-	
-	public MockModelB handleGet(FieldSelector selector, TCID recordId) throws Exception {
-		return mockStorage.get(recordId);
-	}
-
-	public List<MockModelB> handleGet(HttpServletRequest request, QueryParameter query) throws Exception {
-		List<MockModelB> result = new ArrayList<MockModelB>(mockStorage.values());
-		return result;
+	@GET
+	@Path("/{resourceId}")
+	@Timed
+	public ApiResponse getObject(
+			@PathParam("resourceId") TCID recordId,
+			@APIFieldParam(repClass = MockModelB.class) FieldSelector selector,
+			@Context HttpServletRequest request) throws Exception {
+		return ApiResponseFactory.createFieldSelectorResponse(mockStorage.get(recordId), selector);
 	}
 
-	public TCID handlePost(HttpServletRequest request, MockModelB object) throws Exception {
+	@Override
+	@GET
+	@Timed
+	public ApiResponse getObjects(
+			@APIQueryParam(repClass = MockModelB.class) QueryParameter query,
+			@QueryParam("include") Optional<String> includeIn,
+			@Context HttpServletRequest request) throws Exception {
+		return ApiResponseFactory.createFieldSelectorResponse(new ArrayList<MockModelB>(mockStorage.values()),
+				getMetadata(request, query), query.getSelector());
+	}
+
+	@Override
+	@POST
+	@Timed
+	public ApiResponse createObject(@Valid PostPutRequest postRequest, @Context HttpServletRequest request)
+			throws Exception {
+
+		MockModelB resourceData = (MockModelB)postRequest.getParamObject(MockModelB.class);;
+
+		// call the RESTPersistentService.handlePost
 		TCID id = new TCID(integer.getAndIncrement());
-		object.setId(id);
-		object.setModifiedAt(new DateTime());
-		object.setCreatedAt(new DateTime());
-		mockStorage.put(id, object);
-		return object.getId();
+		resourceData.setId(id);
+		resourceData.setModifiedAt(new DateTime());
+		resourceData.setCreatedAt(new DateTime());
+		mockStorage.put(id, resourceData);
+		TCID newID = resourceData.getId();
+
+		resourceData.setId(newID);
+
+		String selector = (postRequest.getReturn()==null||postRequest.getReturn().isEmpty()) ? ApiResponseFactory.DEFAULT_DDL_RETURN_FIELDS : postRequest.getReturn();
+		return ApiResponseFactory.createFieldSelectorResponse(resourceData, FieldSelector.instanceFromV2String(selector));
 	}
 
-	public TCID handlePut(HttpServletRequest request, MockModelB object) throws Exception {
-		MockModelB modelB = mockStorage.get(object.getId());
-		modelB.setIntTest(object.getIntTest());
-		modelB.setStrTest(object.getStrTest());
-		object.setModifiedAt(new DateTime());
-		return object.getId();
-	}
-
-	public void handleDelete(HttpServletRequest request, TCID id) throws Exception {
-		mockStorage.remove(id);
-	}
-
-	public DaoBase<MockModelB> getResourceDao() {
-		/* Not Implemented for mock yet */
-		return null;
-	}
-
-	public ApiResponse handleAction(String action, HttpServletRequest request) throws Exception {
-		/* Not Implemented for mock yet */
-		return null;
-	}
-
-	public ApiResponse handleAction(TCID recordId, String action, HttpServletRequest request) throws Exception {
-		/* Not Implemented for mock yet */
-		return null;
-	}
-	
 	@Override
+	@PUT
+	@Path("/{resourceId}")
+	@Timed
+	public ApiResponse updateObject(@PathParam("resourceId") String resourceId, @Valid PostPutRequest putRequest,
+			@Context HttpServletRequest request) throws Exception {
+
+		MockModelB resourceData = (MockModelB)putRequest.getParamObject(MockModelB.class);
+		resourceData.setId(new TCID(resourceId));
+
+		MockModelB modelB = mockStorage.get(resourceData.getId());
+		modelB.setIntTest(resourceData.getIntTest());
+		modelB.setStrTest(resourceData.getStrTest());
+		resourceData.setModifiedAt(new DateTime());
+		TCID newID = resourceData.getId();
+
+		resourceData.setId(newID);
+
+		String selector = (putRequest.getReturn()==null||putRequest.getReturn().isEmpty()) ? ApiResponseFactory.DEFAULT_DDL_RETURN_FIELDS : putRequest.getReturn();
+		return ApiResponseFactory.createFieldSelectorResponse(resourceData, FieldSelector.instanceFromV2String(selector));
+	}
+
+	@Override
+	@DELETE
+	@Path("/{resourceId}")
+	@Timed
+	public ApiResponse deleteObject(@PathParam("resourceId") String resourceId, @Context HttpServletRequest request)
+			throws Exception {
+		mockStorage.remove(new TCID(resourceId));
+		return ApiResponseFactory.createResponse(new TCID(resourceId));
+	}
+
 	public Metadata getMetadata(HttpServletRequest request, QueryParameter query) throws Exception {
 		CountableMetadata metadata = new CountableMetadata();
 		metadata.setTotalCount(mockStorage.size());
-		populateFieldInfo(metadata);
+		//populateFieldInfo(metadata);
 		return metadata;
 	}
 
@@ -104,11 +138,11 @@ public class MockPersistentService extends AbstractMetadataService implements RE
 		mockStorage.put(model.getId(), model);
 	}
 
-	public Map<TCID, MockModelB> getStorage() {
+	public static Map<TCID, MockModelB> getStorage() {
 		return mockStorage;
 	}
 
-	public void clearData() {
+	public static void clearData() {
 		mockStorage = new HashMap<TCID, MockModelB>();
 	}
 }

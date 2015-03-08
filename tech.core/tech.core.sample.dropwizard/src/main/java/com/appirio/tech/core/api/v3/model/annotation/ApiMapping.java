@@ -8,7 +8,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.appirio.tech.core.api.v3.request.FieldSelector;
+import com.appirio.tech.core.api.v3.request.annotation.APIFieldParam;
 
 /**
  * Annotation to map api fields to Domain Object getter fields.
@@ -23,13 +23,13 @@ import com.appirio.tech.core.api.v3.request.FieldSelector;
 public @interface ApiMapping {
 	/**
 	 * If api has any alias other than pure conversion of getter method, specify using this method.
-	 * 
+	 * TODO: We do use this now.
 	 * @return
 	 */
-	String[] alias() default {};
+	//String[] alias() default {};
 	
 	/**
-	 * Set false if we do not want to return the fields when API didn't specify in {@link FieldSelector}
+	 * Set false if we do not want to return the fields when API didn't specify in {@link APIFieldParam}
 	 * @return
 	 */
 	boolean queryDefault() default true;

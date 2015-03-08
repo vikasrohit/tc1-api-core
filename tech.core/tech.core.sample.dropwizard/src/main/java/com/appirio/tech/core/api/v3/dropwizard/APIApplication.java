@@ -7,10 +7,20 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
-import com.appirio.tech.core.api.v3.controller.APIController;
-import com.appirio.tech.core.api.v3.controller.ResourceFactory;
-import com.appirio.tech.core.api.v3.response.ApiResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.ws.rs.Path;
+
+import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.appirio.tech.core.api.v3.request.inject.FieldSelectorProvider;
+import com.appirio.tech.core.api.v3.request.inject.QueryParameterProvider;
 import com.appirio.tech.core.auth.JWTAuthProvider;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 /**
@@ -28,6 +38,14 @@ import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
  */
 public class APIApplication extends Application<APIBaseConfiguration> {
 
+	private static final Logger logger = LoggerFactory.getLogger(APIApplication.class);
+
+	/**
+	 * The jackson object mapper this application uses.
+	 * Instance will be populated during dropwizard's initialization process.
+	 */
+	public static ObjectMapper JACKSON_OBJECT_MAPPER;
+
 	@Override
 	public String getName() {
 		return "V3API-Application";
@@ -37,17 +55,36 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 	public void initialize(Bootstrap<APIBaseConfiguration> bootstrap) {
 		//V3 API communicates in ISO8601 format for DateTime
 		bootstrap.getObjectMapper().setDateFormat(ISO8601DateFormat.getInstance());
-		ApiResponse.JACKSON_OBJECT_MAPPER = bootstrap.getObjectMapper();
+		JACKSON_OBJECT_MAPPER = bootstrap.getObjectMapper();
 	}
 
+	protected List<Object> getAllResources() throws Exception {
+		Reflections reflections = new Reflections("com.appirio.tech");
+		Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Path.class);
+		
+		List<Object> resourceList = new ArrayList<Object>();
+		for(Class<?> clazz : annotated) {
+			resourceList.add(clazz.getConstructor().newInstance());
+		}
+		return resourceList;
+	}
+	
 	@Override
 	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
 		environment.jersey().setUrlPattern("/v3/*");
-		final APIController resource = new APIController(ResourceFactory.build(configuration));
-		environment.jersey().register(resource);
+		
+		//Find all Resource class and register them to jersey.
+		for(Object resource : getAllResources()) {
+			logger.debug("Registering Resource to Jersey:" + resource.toString());
+			environment.jersey().register(resource);
+		}
+		
+		//Register V3 API query/put/post/delete parameter objects to map into annotated instances
+		environment.jersey().register(new FieldSelectorProvider());
+		environment.jersey().register(new QueryParameterProvider());
 		//Register Authentication Provider to validate JWT with @Auth annotation
 		environment.jersey().register(new JWTAuthProvider());
-		//Catch all exception and wrap to V3 format
+		//Register ExceptionMapper to catch all exception and wrap to V3 format
 		environment.jersey().register(new RuntimeExceptionMapper());
 	}
 

@@ -4,17 +4,23 @@
 package com.appirio.tech.core.api.v3.model;
 
 import java.beans.Introspector;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.appirio.tech.core.api.v3.dropwizard.APIApplication;
 import com.appirio.tech.core.api.v3.exception.APIParseException;
+import com.appirio.tech.core.api.v3.exception.APIRuntimeException;
 import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
-import com.appirio.tech.core.api.v3.service.RESTResource;
+import com.appirio.tech.core.api.v3.resource.old.RESTResource;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author sudo
@@ -48,7 +54,7 @@ public class ResourceHelper {
 	 * @param clazz
 	 * @since v2
 	 */
-	public static FieldSelector getDefaultFieldSelector(Class<? extends RESTResource> clazz) {
+	public static FieldSelector getDefaultFieldSelector(Class<?> clazz) {
 		FieldSelector selector = new FieldSelector();
 		try {
 			Set<String> fields = ResourceHelper.getDefaultFields(clazz);
@@ -61,33 +67,63 @@ public class ResourceHelper {
 		return selector;
 	}
 	
-	public static Set<String> getDefaultFields(Class<? extends RESTResource> clazz) {
-		Set<String> ret = new HashSet<String>();
+	/**
+	 * Return name of fields of Representation class that should be default
+	 * present as V3 FilterParameter if filter parameter is not defined.
+	 * 
+	 * Default fields are those that (1)jackson WILL serialize and (2) are NOT
+	 * annotated with {@link ApiMapping} with visible=false or queryDefault=false
+	 * 
+	 * NOTE: This method uses {@link ObjectMapper} that is used by dropwizard
+	 * which gets populated during initialization process.
+	 * 
+	 * @param representationClass
+	 * @return
+	 */
+	public static Set<String> getDefaultFields(Class<?> representationClass) {
+		//Get set of fields that jackson will serialize
+		Set<String> jacksonSet = new HashSet<String>();
+		Object testObject;
+		try {
+			testObject = representationClass.getConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new APIRuntimeException("failed to instanciate representation pojo class", e);
+		}
+		JsonNode node = APIApplication.JACKSON_OBJECT_MAPPER.valueToTree(testObject);
+		Iterator<String> fieldNames = node.fieldNames();
+		while(fieldNames.hasNext()) {
+			jacksonSet.add(fieldNames.next());
+		}
 		
-		Method[] methods = clazz.getMethods();
+		//Get set of fields that @ApiMapping will ignore
+		Set<String> apiMappingIgnore = new HashSet<String>();
+		Method[] methods = representationClass.getMethods();
 		for(Method method : methods) {
 			String methodName = method.getName();
 			if(methodName.startsWith("get") && method.getParameterTypes().length==0) {
 				ApiMapping api = method.getAnnotation(ApiMapping.class);
-				if(api==null || (api.visible() && api.queryDefault())) {
-					ret.add(getApiFieldName(method.getName()));
-					if(api!=null && api.alias()!=null) {
-						for(String alias : api.alias()) {
-							ret.add(alias);
-						}
-					}
+				if(api!=null && !(api.visible() && api.queryDefault())) {
+					apiMappingIgnore.add(getApiFieldName(method.getName()));
 				}
 			}
 		}
 		
-		return ret;
+		//remove @ApiMapping ignores from jackson Set
+		Iterator<String> apiMapIterator = apiMappingIgnore.iterator();
+		while (apiMapIterator.hasNext()) {
+			String type = apiMapIterator.next();
+			jacksonSet.remove(type);
+		}
+		
+		return jacksonSet;
 	}
 	
 	/**
 	 * Sets collection of fields that will get Serialized and return to the client
 	 * upon REST api call.
-	 * The method will call children's {@link #setSerializeFields(FieldSelector)} if
-	 * this instance has any from the specified {@link FieldSelector}
+	 * The method will call children's {@link #setSerializeFields(APIFieldParam)} if
+	 * this instance has any from the specified {@link APIFieldParam}
 	 * 
 	 * See {@link ApiBeanSerializeFilter} for the implementation and usage of {@link #serializeFields}
 	 *  
