@@ -3,6 +3,8 @@
  */
 package com.appirio.tech.core.api.v3.mock.b;
 
+import io.dropwizard.auth.Auth;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,7 @@ import com.appirio.tech.core.api.v3.resource.DDLResource;
 import com.appirio.tech.core.api.v3.resource.GetResource;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.appirio.tech.core.api.v3.response.ApiResponseFactory;
+import com.appirio.tech.core.auth.AuthUser;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 
@@ -46,7 +49,7 @@ import com.google.common.base.Optional;
  */
 @Path("mock_b_models")
 @Produces(MediaType.APPLICATION_JSON)
-public class MockPersistentService implements GetResource, DDLResource {
+public class MockPersistentService implements GetResource<MockModelB>, DDLResource {
 
 	private AtomicInteger integer = new AtomicInteger(100);
 	private static Map<TCID, MockModelB> mockStorage = new HashMap<TCID, MockModelB>();
@@ -56,6 +59,7 @@ public class MockPersistentService implements GetResource, DDLResource {
 	@Path("/{resourceId}")
 	@Timed
 	public ApiResponse getObject(
+			@Auth AuthUser authUser,
 			@PathParam("resourceId") TCID recordId,
 			@APIFieldParam(repClass = MockModelB.class) FieldSelector selector,
 			@Context HttpServletRequest request) throws Exception {
@@ -66,6 +70,7 @@ public class MockPersistentService implements GetResource, DDLResource {
 	@GET
 	@Timed
 	public ApiResponse getObjects(
+			@Auth AuthUser authUser,
 			@APIQueryParam(repClass = MockModelB.class) QueryParameter query,
 			@QueryParam("include") Optional<String> includeIn,
 			@Context HttpServletRequest request) throws Exception {

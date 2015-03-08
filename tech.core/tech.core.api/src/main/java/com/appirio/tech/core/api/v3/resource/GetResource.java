@@ -1,5 +1,7 @@
 package com.appirio.tech.core.api.v3.resource;
 
+import io.dropwizard.auth.Auth;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -10,14 +12,12 @@ import javax.ws.rs.core.Context;
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.api.v3.request.FieldSelector;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
-import com.appirio.tech.core.api.v3.request.annotation.APIFieldParam;
-import com.appirio.tech.core.api.v3.request.annotation.APIQueryParam;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
-import com.appirio.tech.core.sample.representation.User;
+import com.appirio.tech.core.auth.AuthUser;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 
-public interface GetResource {
+public interface GetResource<T> {
 
 	/**
 	 * A method to catch all requests to /{resource}/{id}.
@@ -35,8 +35,9 @@ public interface GetResource {
 	@Path("/{resourceId}")
 	@Timed
 	public abstract ApiResponse getObject(
+			@Auth AuthUser authUser,
 			@PathParam("resourceId") TCID recordId,
-			@APIFieldParam(repClass = User.class) FieldSelector selector,
+			/*@APIFieldParam(repClass =T.class)*/ FieldSelector selector,
 			@Context HttpServletRequest request) throws Exception;
 
 	/**
@@ -54,8 +55,8 @@ public interface GetResource {
 	@GET
 	@Timed
 	public abstract ApiResponse getObjects(
-			//			@Auth AuthUser user,
-			@APIQueryParam(repClass = User.class) QueryParameter query,
+			@Auth AuthUser authUser,
+			/*@APIQueryParam(repClass = User.class)*/ QueryParameter query,
 			@QueryParam(value = "include") Optional<String> includeIn,
 			@Context HttpServletRequest request) throws Exception;
 

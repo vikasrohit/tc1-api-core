@@ -3,6 +3,8 @@
  */
 package com.appirio.tech.core.sample.resource;
 
+import io.dropwizard.auth.Auth;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +38,7 @@ import com.appirio.tech.core.api.v3.resource.DDLResource;
 import com.appirio.tech.core.api.v3.resource.GetResource;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.appirio.tech.core.api.v3.response.ApiResponseFactory;
+import com.appirio.tech.core.auth.AuthUser;
 import com.appirio.tech.core.sample.exception.StorageException;
 import com.appirio.tech.core.sample.representation.User;
 import com.appirio.tech.core.sample.storage.InMemoryUserStorage;
@@ -48,7 +51,7 @@ import com.google.common.base.Optional;
  */
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON)
-public class UserCRUDResource implements GetResource, DDLResource {
+public class UserCRUDResource implements GetResource<User>, DDLResource {
 
 	private InMemoryUserStorage storage = InMemoryUserStorage.instance();
 	
@@ -56,8 +59,11 @@ public class UserCRUDResource implements GetResource, DDLResource {
 	@GET
 	@Path("/{resourceId}")
 	@Timed
-	public ApiResponse getObject(@PathParam("resourceId") TCID recordId,
-			@APIFieldParam(repClass = User.class) FieldSelector selector, @Context HttpServletRequest request)
+	public ApiResponse getObject(
+			@Auth AuthUser authUser,
+			@PathParam("resourceId") TCID recordId,
+			@APIFieldParam(repClass = User.class) FieldSelector selector,
+			@Context HttpServletRequest request)
 			throws Exception {
 		for(User user : storage.getUserList()) {
 			if(user.getId().equals(recordId)) {
@@ -70,8 +76,11 @@ public class UserCRUDResource implements GetResource, DDLResource {
 	@Override
 	@GET
 	@Timed
-	public ApiResponse getObjects(@APIQueryParam(repClass = User.class) QueryParameter query,
-			@QueryParam("include") Optional<String> includeIn, @Context HttpServletRequest request) throws Exception {
+	public ApiResponse getObjects(
+			@Auth AuthUser authUser,
+			@APIQueryParam(repClass = User.class) QueryParameter query,
+			@QueryParam("include") Optional<String> includeIn,
+			@Context HttpServletRequest request) throws Exception {
 		FilterParameter parameter = query.getFilter();
 		List<User> resultList = storage.getFilteredUserList(parameter);
 		
