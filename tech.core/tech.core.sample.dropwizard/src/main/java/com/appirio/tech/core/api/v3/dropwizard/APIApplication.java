@@ -7,6 +7,13 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+import java.util.EnumSet;
+
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration.Dynamic;
+
+import org.eclipse.jetty.servlets.CrossOriginFilter;
+
 import com.appirio.tech.core.api.v3.controller.APIController;
 import com.appirio.tech.core.api.v3.controller.ResourceFactory;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
@@ -42,6 +49,7 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 
 	@Override
 	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
+		configureCors(environment);
 		environment.jersey().setUrlPattern("/v3/*");
 		final APIController resource = new APIController(ResourceFactory.build(configuration));
 		environment.jersey().register(resource);
@@ -49,6 +57,18 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 		environment.jersey().register(new JWTAuthProvider());
 		//Catch all exception and wrap to V3 format
 		environment.jersey().register(new RuntimeExceptionMapper());
+	}
+	
+	// http://jitterted.com/tidbits/2014/09/12/cors-for-dropwizard-0-7-x/
+	protected void configureCors(Environment environment) {
+		Dynamic filter = environment.servlets().addFilter("CORS",
+				CrossOriginFilter.class);
+		filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
+		filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,DELETE,OPTIONS");
+		filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+		filter.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
+		filter.setInitParameter("allowedHeaders", "Content-Type,Authorization,X-Requested-With,Content-Length,Accept,Origin");
+		filter.setInitParameter("allowCredentials", "true");
 	}
 
 	public static void main(String[] args) throws Exception {
