@@ -36,6 +36,7 @@ import com.appirio.tech.core.api.v3.request.PostPutRequest;
 import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.api.v3.response.ApiFieldSelectorResponse;
 import com.appirio.tech.core.api.v3.response.ApiResponse;
+import com.appirio.tech.core.api.v3.service.RESTActionService;
 import com.appirio.tech.core.api.v3.service.RESTMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTPersistentService;
 import com.appirio.tech.core.api.v3.service.RESTQueryService;
@@ -314,6 +315,28 @@ public class APIController {
 		return createResponse(new TCID(resourceId));
 	}
 
+	@POST
+	@Path("/{resource}/{resourceId}/{action}")
+	@Timed
+	public ApiResponse performAction(@PathParam("resource") String resource,
+			@PathParam("resourceId") String resourceId,
+			@PathParam("action") String action,
+			@Context HttpServletRequest request) throws Exception {
+		RESTActionService service = resourceFactory.getActionService(resource);
+		return service.handleAction(new TCID(resourceId), action, request);		
+	}
+
+	@POST
+	@Path("/{resource}/{action}")
+	@Timed
+	public ApiResponse performAction(@PathParam("resource") String resource,
+			@PathParam("action") String action,
+			@Context HttpServletRequest request) throws Exception {
+		RESTActionService service = resourceFactory.getActionService(resource);
+		return service.handleAction(action, request);		
+	}
+
+	
 	/**
 	 * @param resource
 	 * @param putRequest
