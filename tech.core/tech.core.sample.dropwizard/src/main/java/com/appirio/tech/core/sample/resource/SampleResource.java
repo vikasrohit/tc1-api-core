@@ -18,7 +18,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
@@ -40,18 +39,17 @@ import com.appirio.tech.core.api.v3.response.ApiResponse;
 import com.appirio.tech.core.api.v3.response.ApiResponseFactory;
 import com.appirio.tech.core.auth.AuthUser;
 import com.appirio.tech.core.sample.exception.StorageException;
-import com.appirio.tech.core.sample.representation.User;
+import com.appirio.tech.core.sample.representation.Sample;
 import com.appirio.tech.core.sample.storage.InMemoryUserStorage;
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Optional;
 
 /**
  * @author sudo
  *
  */
-@Path("users")
+@Path("apisamples")
 @Produces(MediaType.APPLICATION_JSON)
-public class UserCRUDResource implements GetResource<User>, DDLResource {
+public class SampleResource implements GetResource<Sample>, DDLResource {
 
 	private InMemoryUserStorage storage = InMemoryUserStorage.instance();
 	
@@ -62,10 +60,10 @@ public class UserCRUDResource implements GetResource<User>, DDLResource {
 	public ApiResponse getObject(
 			@Auth AuthUser authUser,
 			@PathParam("resourceId") TCID recordId,
-			@APIFieldParam(repClass = User.class) FieldSelector selector,
+			@APIFieldParam(repClass = Sample.class) FieldSelector selector,
 			@Context HttpServletRequest request)
 			throws Exception {
-		for(User user : storage.getUserList()) {
+		for(Sample user : storage.getUserList()) {
 			if(user.getId().equals(recordId)) {
 				return ApiResponseFactory.createFieldSelectorResponse(user, selector);
 			}
@@ -78,40 +76,39 @@ public class UserCRUDResource implements GetResource<User>, DDLResource {
 	@Timed
 	public ApiResponse getObjects(
 			@Auth AuthUser authUser,
-			@APIQueryParam(repClass = User.class) QueryParameter query,
-			@QueryParam("include") Optional<String> includeIn,
+			@APIQueryParam(repClass = Sample.class) QueryParameter query,
 			@Context HttpServletRequest request) throws Exception {
 		FilterParameter parameter = query.getFilter();
-		List<User> resultList = storage.getFilteredUserList(parameter);
+		List<Sample> resultList = storage.getFilteredUserList(parameter);
 		
 		//order_by
 		if(query.getOrderByQuery().getOrderByField()!=null) {
 			String orderField = query.getOrderByQuery().getOrderByField();
 			final Boolean order = SortOrder.ASC_NULLS_FIRST==query.getOrderByQuery().getSortOrder()?true:false;
 			if(orderField.equals("handle")) {
-				Collections.sort(resultList, new Comparator<User>() {
-					public int compare(User o1, User o2) {
+				Collections.sort(resultList, new Comparator<Sample>() {
+					public int compare(Sample o1, Sample o2) {
 						int result = o1.getHandle().compareTo(o2.getHandle());
 						return order?result:-1*result;
 					}
 				});
 			}else if(orderField.equals("email")) {
-				Collections.sort(resultList, new Comparator<User>() {
-					public int compare(User o1, User o2) {
+				Collections.sort(resultList, new Comparator<Sample>() {
+					public int compare(Sample o1, Sample o2) {
 						int result = o1.getEmail().compareTo(o2.getEmail());
 						return order?result:-1*result;
 					}
 				});
 			}else if(orderField.equals("firstName")) {
-				Collections.sort(resultList, new Comparator<User>() {
-					public int compare(User o1, User o2) {
+				Collections.sort(resultList, new Comparator<Sample>() {
+					public int compare(Sample o1, Sample o2) {
 						int result = o1.getFirstName().compareTo(o2.getFirstName());
 						return order?result:-1*result;
 					}
 				});
 			}else if(orderField.equals("lastName")) {
-				Collections.sort(resultList, new Comparator<User>() {
-					public int compare(User o1, User o2) {
+				Collections.sort(resultList, new Comparator<Sample>() {
+					public int compare(Sample o1, Sample o2) {
 						int result = o1.getLastName().compareTo(o2.getLastName());
 						return order?result:-1*result;
 					}
@@ -137,7 +134,7 @@ public class UserCRUDResource implements GetResource<User>, DDLResource {
 	@Timed
 	public ApiResponse createObject(@Valid PostPutRequest postRequest, @Context HttpServletRequest request)
 			throws Exception {
-		User object = (User)postRequest.getParamObject(User.class);
+		Sample object = (Sample)postRequest.getParamObject(Sample.class);
 		object.setCreatedAt(new DateTime());
 		object.setModifiedAt(new DateTime());
 		return ApiResponseFactory.createResponse(storage.insertUser(object).getId());
@@ -149,7 +146,7 @@ public class UserCRUDResource implements GetResource<User>, DDLResource {
 	@Timed
 	public ApiResponse updateObject(@PathParam("resourceId") String resourceId, @Valid PostPutRequest putRequest,
 			@Context HttpServletRequest request) throws Exception {
-		User object = (User)putRequest.getParamObject(User.class);
+		Sample object = (Sample)putRequest.getParamObject(Sample.class);
 		object.setModifiedAt(new DateTime());
 		storage.updateUser(object);
 		return ApiResponseFactory.createResponse(object.getId());

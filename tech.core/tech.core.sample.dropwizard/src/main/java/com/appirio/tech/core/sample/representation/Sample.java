@@ -9,7 +9,7 @@ import com.appirio.tech.core.api.v3.model.AbstractIdResource;
  * @author sudo
  *
  */
-public class User extends AbstractIdResource {
+public class Sample extends AbstractIdResource {
 
 	private String handle;
 	private String email;
