@@ -33,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @author sudo
  *
  */
-@Path("users")
+@Path("samples")
 public class UserCRUDService extends AbstractMetadataService implements RESTPersistentService<User> {
 
 	private InMemoryUserStorage storage = InMemoryUserStorage.instance();

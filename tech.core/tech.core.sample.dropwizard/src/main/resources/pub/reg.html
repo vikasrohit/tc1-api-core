@@ -7,7 +7,7 @@
 	<script type="text/javascript">
 	<!--
     function register() {
-        var endpoint = $("#endpoint").val();
+        var endpoint = $("#host").val()+$("#endpoint").val();
         var payload = JSON.stringify(
             { param: {
             	handle: $("#handle").val(),
@@ -95,10 +95,13 @@
 		<dl>
 			<dt>API endpoint:</dt>
 			<dd>
-				<!-- 
-				<input type="text" id="endpoint" value="http://api.topcoder-dev.com/v3/users" size=70/>
-				 -->
-				<input type="text" id="endpoint" value="http://localhost:8080/v3/users" size=70/>
+				<dt>endpoint:</dt>
+				<dd><select id="host">
+        			<option value="http://api.topcoder-dev.com">http://api.topcoder-dev.com</option>
+        			<option value="http://localhost:8080">http://localhost:8080</option>
+      			</select>
+      			<input type="text" id="endpoint" value="/v3/users" size=15/>
+      			</dd>
 			</dd>
 		</dl>
     	<button type="button" onclick="register()">Register</button>

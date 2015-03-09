@@ -16,14 +16,13 @@ database:
   driverClass: com.informix.jdbc.IfxDriver
 
   # the username
-  user: coder
+  user: @application.database.user@
 
   # the password
-  password: 1nf0rm1x
+  password: @application.database.password@
 
   # the JDBC URL
-  url: jdbc:informix-sqli://oltp01.prod.topcoder.com:2020/informixoltp:INFORMIXSERVER=informixoltp_tcp
-  #url: jdbc:informix-sqli://localhost:7995/common_oltp:INFORMIXSERVER=informixoltp_tcp
+  url: jdbc:informix-sqli://@application.database.host@:@application.database.port@/common_oltp:INFORMIXSERVER=informixoltp_tcp
 
   validationQuery: SELECT TODAY FROM systables WHERE tabid = 1
 
