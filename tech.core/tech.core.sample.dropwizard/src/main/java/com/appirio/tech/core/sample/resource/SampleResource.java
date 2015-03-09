@@ -132,7 +132,10 @@ public class SampleResource implements GetResource<Sample>, DDLResource {
 	@Override
 	@POST
 	@Timed
-	public ApiResponse createObject(@Valid PostPutRequest postRequest, @Context HttpServletRequest request)
+	public ApiResponse createObject(
+			@Auth AuthUser authUser,
+			@Valid PostPutRequest postRequest,
+			@Context HttpServletRequest request)
 			throws Exception {
 		Sample object = (Sample)postRequest.getParamObject(Sample.class);
 		object.setCreatedAt(new DateTime());
@@ -144,7 +147,10 @@ public class SampleResource implements GetResource<Sample>, DDLResource {
 	@PUT
 	@Path("/{resourceId}")
 	@Timed
-	public ApiResponse updateObject(@PathParam("resourceId") String resourceId, @Valid PostPutRequest putRequest,
+	public ApiResponse updateObject(
+			@Auth AuthUser authUser,
+			@PathParam("resourceId") String resourceId,
+			@Valid PostPutRequest putRequest,
 			@Context HttpServletRequest request) throws Exception {
 		Sample object = (Sample)putRequest.getParamObject(Sample.class);
 		object.setModifiedAt(new DateTime());
@@ -156,7 +162,10 @@ public class SampleResource implements GetResource<Sample>, DDLResource {
 	@DELETE
 	@Path("/{resourceId}")
 	@Timed
-	public ApiResponse deleteObject(@PathParam("resourceId") String resourceId, @Context HttpServletRequest request)
+	public ApiResponse deleteObject(
+			@Auth AuthUser authUser,
+			@PathParam("resourceId") String resourceId,
+			@Context HttpServletRequest request)
 			throws Exception {
 		storage.deleteUser(new TCID(resourceId));
 		return ApiResponseFactory.createResponse(new TCID(resourceId));
