@@ -49,7 +49,7 @@ public class APIApplication extends Application<APIBaseConfiguration> {
 
 	@Override
 	public void run(APIBaseConfiguration configuration, Environment environment) throws Exception {
-		configureCors(environment);
+		//configureCors(environment);
 		environment.jersey().setUrlPattern("/v3/*");
 		final APIController resource = new APIController(ResourceFactory.build(configuration));
 		environment.jersey().register(resource);
