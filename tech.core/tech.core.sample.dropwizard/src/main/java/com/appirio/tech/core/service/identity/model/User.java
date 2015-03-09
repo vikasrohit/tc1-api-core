@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.appirio.tech.core.identity.model;
+package com.appirio.tech.core.service.identity.model;
 
 import com.appirio.tech.core.api.v3.model.AbstractIdResource;
 
@@ -15,9 +15,8 @@ public class User extends AbstractIdResource {
 	private String email;
 	private String firstName;
 	private String lastName;
-	private Credential credencial;
+	private Credential credential;
 	private Boolean active;
-	private String status;
 	
 	public String getHandle() {
 		return handle;
@@ -49,10 +48,10 @@ public class User extends AbstractIdResource {
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
-	public Credential getCredencial() {
-		return credencial;
+	public Credential getCredential() {
+		return credential;
 	}
-	public void setCredencial(Credential credencial) {
-		this.credencial = credencial;
+	public void setCredential(Credential credential) {
+		this.credential = credential;
 	}
 }

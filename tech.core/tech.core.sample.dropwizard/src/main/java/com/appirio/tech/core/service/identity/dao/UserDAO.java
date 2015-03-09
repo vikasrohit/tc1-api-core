@@ -1,4 +1,4 @@
-package com.appirio.tech.core.identity.dao;
+package com.appirio.tech.core.service.identity.dao;
 
 import org.skife.jdbi.v2.TransactionIsolationLevel;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -13,10 +13,10 @@ import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLoc
 import com.appirio.tech.core.api.v3.TCID;
 import com.appirio.tech.core.api.v3.controller.ResourceFactory;
 import com.appirio.tech.core.api.v3.util.jdbi.TCBeanMapperFactory;
-import com.appirio.tech.core.identity.model.User;
-import com.appirio.tech.core.identity.util.Utils;
-import com.appirio.tech.core.identity.util.idgen.SequenceDAO;
-import com.appirio.tech.core.identity.util.jdbi.BindUser;
+import com.appirio.tech.core.service.identity.model.User;
+import com.appirio.tech.core.service.identity.util.Utils;
+import com.appirio.tech.core.service.identity.util.idgen.SequenceDAO;
+import com.appirio.tech.core.service.identity.util.jdbi.BindUser;
 
 @UseStringTemplate3StatementLocator
 @RegisterMapperFactory(TCBeanMapperFactory.class)
@@ -30,10 +30,32 @@ public abstract class UserDAO implements Transactional<UserDAO> {
 	)
 	public abstract User findUserById(@Bind("id") long id);
 	
+	@SqlQuery(
+			"SELECT u.user_id as id, u.first_name AS firstName, u.last_name AS lastName, u.handle, " +
+			"DECODE(u.status, 'A', 1, 0) AS active, " +
+			"(SELECT e.address FROM user AS u JOIN email AS e ON e.user_id = u.user_id WHERE u.handle_lower = LOWER(:handle) AND e.email_type_id = 1 AND e.primary_ind = 1) AS email " +
+			"FROM user AS u WHERE u.handle_lower = LOWER(:handle)"
+	)
+	public abstract User findUserByHandle(@Bind("handle") String handle);
+	
+	@SqlQuery(
+			"SELECT u.user_id as id, u.first_name AS firstName, u.last_name AS lastName, u.handle, " +
+			"DECODE(u.status, 'A', 1, 0) AS active,  " +
+			"e.address AS email " +
+			"FROM user AS u  JOIN email AS e ON e.user_id = u.user_id WHERE e.address = :email"
+	)
+	public abstract User findUserByEmail(@Bind("email") String email);
+	
+	
+	
+	@SqlQuery("SELECT invalid_handle from invalid_handles WHERE invalid_handle = :handle")
+	public abstract String findInvalidHandle(@Bind("handle") String handle);
+	
+	// TODO: activation code
 	@SqlUpdate(
 			"INSERT INTO user " +
 			"(user_id, first_name, last_name, handle, status, activation_code) VALUES " +
-			"(:id, :firstName, :lastName, :handle, :status, 'TEST0')")
+			"(:id, :firstName, :lastName, :handle, :status, 'ABCDEFG')")
 			//"(:u.id, :u.firstName, :u.lastName, :u.handle, :u.status, :activationCode)")
 	@Transaction(TransactionIsolationLevel.REPEATABLE_READ)
 	public abstract long createUser(@BindUser User user);
@@ -62,22 +84,28 @@ public abstract class UserDAO implements Transactional<UserDAO> {
 	
 	@Transaction(TransactionIsolationLevel.REPEATABLE_READ)
 	public TCID create(User user) {
-		createUser(user);
-		Long userId = Long.parseLong(user.getId().toString());
-		createSecurityUser(
-			userId, 
-			user.getHandle(),
-			Utils.encodePassword("password", "users")); // TODO: password
-		
-		// TODO:
+
 		SequenceDAO seqDao = (SequenceDAO)ResourceFactory.instance().getObject(SequenceDAO.class);
+		Long userId = seqDao.nextVal("sequence_user_seq");
+
+		user.setId(new TCID(userId));
+		createUser(user);
+		createSecurityUser(
+			userId, user.getHandle(),
+			Utils.encodePassword(user.getCredential().getPassword(), "users")); // TODO: password
+		
 		Long emailId = seqDao.nextVal("sequence_email_seq");
 		registerEMail(userId, emailId, user.getEmail());
 		
-		// TODO: does not work
+		// TODO: does not work (need patch to fix JDBI)
 		//createCoder("'informixoltp':", userId);
 		
 		return user.getId();
+	}
+	
+	public boolean handleExists(String handle) {
+		User user = findUserByHandle(handle);
+		return user != null;
 	}
 	
 /*

@@ -1,7 +1,6 @@
-package com.appirio.tech.core.identity.model;
+package com.appirio.tech.core.service.identity.model;
 
 import com.appirio.tech.core.api.v3.model.AbstractIdResource;
-import com.appirio.tech.core.api.v3.model.annotation.ApiMapping;
 
 public class Credential extends AbstractIdResource {
 

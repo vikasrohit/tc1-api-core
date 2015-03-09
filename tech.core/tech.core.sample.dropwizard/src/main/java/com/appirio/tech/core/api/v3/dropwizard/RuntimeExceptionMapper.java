@@ -26,7 +26,13 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
 		ApiResponse apiResponse = new ApiResponse();
 		String message;
 		int status = HttpStatus.INTERNAL_SERVER_ERROR_500;
-		if(exception.getCause()!=null &&
+		// TODO: needs refactoring
+		if(exception instanceof APIRuntimeException) {
+			message = exception.getLocalizedMessage();
+			status = ((APIRuntimeException)exception).getHttpStatus();
+			apiResponse.setResult(true, status, message);
+		}
+		else if(exception.getCause()!=null &&
 				exception.getCause() instanceof APIRuntimeException) {
 			message = exception.getCause().getLocalizedMessage();
 			status = ((APIRuntimeException)exception.getCause()).getHttpStatus();

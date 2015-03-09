@@ -1,4 +1,4 @@
-package com.appirio.tech.core.identity.util.jdbi;
+package com.appirio.tech.core.service.identity.util.jdbi;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -16,7 +16,7 @@ import org.skife.jdbi.v2.sqlobject.Binder;
 import org.skife.jdbi.v2.sqlobject.BinderFactory;
 import org.skife.jdbi.v2.sqlobject.BindingAnnotation;
 
-import com.appirio.tech.core.identity.model.User;
+import com.appirio.tech.core.service.identity.model.User;
 
 @BindingAnnotation(BindUser.UserBinderFactory.class)
 @Retention(RetentionPolicy.RUNTIME)
@@ -35,8 +35,6 @@ public @interface BindUser {
 				public void bind(SQLStatement stmt, BindUser bind, User obj) {
 					if(obj == null)
 						return;
-					
-					String prefix = bind.value();
 					
 					BeanInfo info = null;
 					try {

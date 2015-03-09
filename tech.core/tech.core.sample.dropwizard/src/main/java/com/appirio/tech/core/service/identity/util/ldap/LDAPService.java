@@ -1,4 +1,4 @@
-package com.appirio.tech.core.identity.util.ldap;
+package com.appirio.tech.core.service.identity.util.ldap;
 
 import org.apache.log4j.Logger;
 

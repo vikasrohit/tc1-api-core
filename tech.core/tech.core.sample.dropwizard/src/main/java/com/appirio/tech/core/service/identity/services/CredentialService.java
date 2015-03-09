@@ -1,4 +1,4 @@
-package com.appirio.tech.core.identity.services;
+package com.appirio.tech.core.service.identity.services;
 
 import java.util.List;
 
@@ -13,8 +13,8 @@ import com.appirio.tech.core.api.v3.request.QueryParameter;
 import com.appirio.tech.core.api.v3.service.AbstractMetadataService;
 import com.appirio.tech.core.api.v3.service.RESTPersistentService;
 import com.appirio.tech.core.api.v3.service.RESTResource;
-import com.appirio.tech.core.identity.model.Credential;
-import com.appirio.tech.core.identity.model.User;
+import com.appirio.tech.core.service.identity.model.Credential;
+import com.appirio.tech.core.service.identity.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Path("credentials")

@@ -1,4 +1,4 @@
-package com.appirio.tech.core.identity.util.idgen;
+package com.appirio.tech.core.service.identity.util.idgen;
 
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.Define;

@@ -1,14 +1,12 @@
-package com.appirio.tech.core.identity.util.idgen;
+package com.appirio.tech.core.service.identity.util.idgen;
 
 public class Sequence {
 
 	public Sequence() {
 	}
 
-	/** id_sequences.name */
 	private String name;
 	
-	/** id_sequences.next_block_start */
 	private Long nextVal;
 
 	public String getName() {
