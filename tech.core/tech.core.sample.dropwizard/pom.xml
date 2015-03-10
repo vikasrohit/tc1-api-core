@@ -160,15 +160,6 @@
 	    <artifactId>com.springsource.com.informix.jdbc</artifactId>
 	    <version>3.0.0.JC3</version>
 	</dependency>
-<!--
-	<dependency>
-	    <groupId>com.informix.jdbc</groupId>
-		<artifactId>ifxjdbc</artifactId>
-		<version>1.0.0</version>
-		<scope>system</scope>
-		<systemPath>${basedir}/lib/informix/ifxjdbc.jar</systemPath>
-	</dependency>
--->
 	<dependency>
 		<groupId>com.topcoder</groupId>
 		<artifactId>security</artifactId>
